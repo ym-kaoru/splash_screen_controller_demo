@@ -1,0 +1,2 @@
+class StubActivity(object):
+    pass

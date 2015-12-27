@@ -1,0 +1,13 @@
+before { |items|
+  items << :onCreateA
+  items << :onSaveInstanceState
+}
+parallel {
+  choice { |items|
+    items << [:onDestroyA]
+  }
+  choice { |items|
+    items << [:onCreateB, :onDestroyB]
+    items << [:onCreateB, :onStartB, :onStopB, :onDestroyB]
+  }
+}
