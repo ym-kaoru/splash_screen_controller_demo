@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.9.1/styles/default.min.css">
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.9.1/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+</head>
+<body>
+    <h6>splash_screen_controller-SplashScreenControllerStateMachine.svg</h6>
+    <img src="splash_screen_controller-SplashScreenControllerStateMachine.svg">
+  <pre><code class="ruby">state_machine(&#39;SplashScreenControllerStateMachine&#39;, name:&#39;state_machine&#39;) {
+    def_event :onCreate =&gt; [arg(&#39;saved_instance_state&#39;, type:&#39;Bundle&#39;)]
+    def_event :onResume, :onPause
+    def_public_event :closeDialog, :cancelDialog
+    def_public_event :click
+    def_timer :timer1, 1000, pending_if:&#39;not self.parent_context.isResumed()&#39;
+    def_async_event :receiveResponse, pending_if:&#39;not self.parent_context.isResumed()&#39;, priority:1, public:true
+    def_async_event :checkApi
+
+    state(:ENTRY_POINT) {
+        onCreate :WAITING_FOR_API
+    }
+
+    state_group(:SPLASH_SCREEN, entry:&#39;self.parent_context.showSplashScreen()&#39;, exit:&#39;self.parent_context.hideSplashScreen()&#39;) {
+        state(:WAITING_FOR_API, timer: :timer1, auto_event:[:checkApi]) {
+            notify_timer1_timeout :ERROR_DIALOG
+            receiveResponse :READY
+
+            checkApi :READY, if:&#39;self.parent_context.isResponseAvailable()&#39;
+            checkApi nil, action:&#39;self.parent_context.requestApi()&#39;
+
+            onResume :READY, if:&#39;self.parent_context.isResponseAvailable()&#39;
+        }
+
+        state(:ERROR_DIALOG, entry:&#39;self.parent_context.showDialog();&#39;, exit:&#39;self.parent_context.dismissDialog()&#39;) {
+            closeDialog :WAITING_FOR_API   # Closed by user interaction
+            cancelDialog :WAITING_FOR_API  # Closed by system
+            receiveResponse :READY
+            #onResume :WAITING_FOR_API
+        }
+    }
+
+    state(:READY, entry:&#39;self.parent_context.onReady()&#39;) {
+    }
+}
+</code></pre>
+</body>
+</html>

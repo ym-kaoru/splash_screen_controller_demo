@@ -1,0 +1,35 @@
+state_machine('SplashScreenControllerStateMachine', name:'state_machine') {
+    def_event :onCreate => [arg('saved_instance_state', type:'Bundle')]
+    def_event :onResume, :onPause
+    def_public_event :closeDialog, :cancelDialog
+    def_public_event :click
+    def_timer :timer1, 1000, pending_if:'not self.parent_context.isResumed()'
+    def_async_event :receiveResponse, pending_if:'not self.parent_context.isResumed()', priority:1, public:true
+    def_async_event :checkApi
+
+    state(:ENTRY_POINT) {
+        onCreate :WAITING_FOR_API
+    }
+
+    state_group(:SPLASH_SCREEN, entry:'self.parent_context.showSplashScreen()', exit:'self.parent_context.hideSplashScreen()') {
+        state(:WAITING_FOR_API, timer: :timer1, auto_event:[:checkApi]) {
+            notify_timer1_timeout :ERROR_DIALOG
+            receiveResponse :READY
+
+            checkApi :READY, if:'self.parent_context.isResponseAvailable()'
+            checkApi nil, action:'self.parent_context.requestApi()'
+
+            onResume :READY, if:'self.parent_context.isResponseAvailable()'
+        }
+
+        state(:ERROR_DIALOG, entry:'self.parent_context.showDialog();', exit:'self.parent_context.dismissDialog()') {
+            closeDialog :WAITING_FOR_API   # Closed by user interaction
+            cancelDialog :WAITING_FOR_API  # Closed by system
+            receiveResponse :READY
+            #onResume :WAITING_FOR_API
+        }
+    }
+
+    state(:READY, entry:'self.parent_context.onReady()') {
+    }
+}

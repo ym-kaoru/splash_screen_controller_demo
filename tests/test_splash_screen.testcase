@@ -1,0 +1,25 @@
+items = [
+    [
+        :onCreateA, :onResumeA, :onPauseA, :onSaveInstanceStateA,
+        :onCreateB, :onResumeB, :onPauseB, :expectInDoorState
+    ]
+]
+
+add_async_events! items, from: :onCreateA, to: :onPauseB, items:[[:receiveResponse]]
+
+add_patterns items
+
+
+
+
+items = [
+    [
+        :onCreateA,
+        :onResumeA, :onPauseA,
+        :onResumeA, :onPauseA,
+        :onResumeA, :notifyTimedOut, :onPauseA, :onSaveInstanceStateA,
+        :onCreateB, :onResumeB, :expectInErrorDialog, :receiveResponse, :expectInDoorState, :onPauseB
+    ]
+]
+
+add_patterns items

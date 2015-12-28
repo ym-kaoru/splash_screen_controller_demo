@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.9.1/styles/default.min.css">
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.9.1/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+</head>
+<body>
+  <pre><code class="ruby">state_machine(&#39;Abc&#39;, name:&#39;sm&#39;) {
+    def_public_event :onCreate =&gt; [arg(&#39;saved_instance_state&#39;, type:&#39;Bundle&#39;)]
+    def_public_event :notifyTimeout
+    def_public_event :click
+
+    state(:ENTRY_POINT) {
+        onCreate :SPLASH_SCREEN
+    }
+
+    state(:SPLASH_SCREEN, entry:&#39;self.parent_context.showSplashScreen()&#39;, exit:&#39;self.parent_context.hideSplashScreen()&#39;) {
+        notifyTimeout :DOOR
+    }
+
+    state(:DOOR, entry:&#39;self.parent_context.replaceDoorFragment()&#39;) {
+        click :MAIN
+    }
+
+    state(:MAIN, entry:&#39;self.parent_context.replaceMainFragment()&#39;) {
+    }
+}
+</code></pre>
+</body>
+</html>

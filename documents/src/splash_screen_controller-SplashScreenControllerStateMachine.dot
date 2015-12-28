@@ -1,0 +1,10 @@
+digraph {
+    ENTRY_POINT -> WAITING_FOR_API[label="onCreate"]
+    WAITING_FOR_API -> ERROR_DIALOG[label="notify_timer1_timeout"]
+    WAITING_FOR_API -> READY[label="receiveResponse"]
+    WAITING_FOR_API -> READY[label="checkApi"]
+    WAITING_FOR_API -> READY[label="onResume"]
+    ERROR_DIALOG -> WAITING_FOR_API[label="closeDialog"]
+    ERROR_DIALOG -> WAITING_FOR_API[label="cancelDialog"]
+    ERROR_DIALOG -> READY[label="receiveResponse"]
+}

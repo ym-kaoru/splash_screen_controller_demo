@@ -3,3 +3,4 @@ vendor/
 bin/
 *.pyc
 .idea/
+.DS_Store

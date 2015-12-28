@@ -1,0 +1,5 @@
+digraph {
+    ENTRY_POINT -> SPLASH_SCREEN[label="onCreate"]
+    SPLASH_SCREEN -> DOOR[label="notifyTimeout"]
+    DOOR -> MAIN[label="click"]
+}
