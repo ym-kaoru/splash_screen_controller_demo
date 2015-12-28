@@ -5,12 +5,12 @@ import sys
 import unittest
 
 
-class CreateStartResumePauseStopDestroy(unittest.TestCase):
+class test_create_start_resume_pause_stop_destroy(unittest.TestCase):
     def setUp(self):
-        super(CreateStartResumePauseStopDestroy, self).setUp()
+        super(test_create_start_resume_pause_stop_destroy, self).setUp()
 
     def tearDown(self):
-        super(CreateStartResumePauseStopDestroy, self).tearDown()
+        super(test_create_start_resume_pause_stop_destroy, self).tearDown()
 
 # %%
 
@@ -723,5 +723,5 @@ class CreateStartResumePauseStopDestroy(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    CreateStartResumePauseStopDestroy.checkSanity()
+    test_create_start_resume_pause_stop_destroy.checkSanity()
     unittest.main()

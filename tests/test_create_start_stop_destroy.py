@@ -5,12 +5,12 @@ import sys
 import unittest
 
 
-class CreateStartStopDestroy(unittest.TestCase):
+class test_create_start_stop_destroy(unittest.TestCase):
     def setUp(self):
-        super(CreateStartStopDestroy, self).setUp()
+        super(test_create_start_stop_destroy, self).setUp()
 
     def tearDown(self):
-        super(CreateStartStopDestroy, self).tearDown()
+        super(test_create_start_stop_destroy, self).tearDown()
 
 # %%
 
@@ -261,5 +261,5 @@ class CreateStartStopDestroy(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    CreateStartStopDestroy.checkSanity()
+    test_create_start_stop_destroy.checkSanity()
     unittest.main()

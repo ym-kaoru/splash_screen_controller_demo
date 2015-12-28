@@ -5,12 +5,12 @@ import sys
 import unittest
 
 
-class CreateDestroy(unittest.TestCase):
+class test_create_destroy(unittest.TestCase):
     def setUp(self):
-        super(CreateDestroy, self).setUp()
+        super(test_create_destroy, self).setUp()
 
     def tearDown(self):
-        super(CreateDestroy, self).tearDown()
+        super(test_create_destroy, self).tearDown()
 
 # %%
 
@@ -108,5 +108,5 @@ class CreateDestroy(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    CreateDestroy.checkSanity()
+    test_create_destroy.checkSanity()
     unittest.main()
