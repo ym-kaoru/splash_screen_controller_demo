@@ -3,8 +3,10 @@ set_class_name 'TestDialogController'
 items = [
     [
         :onCreateA, :onResumeA, :onPauseA, :onSaveInstanceStateA,
-        :onCreateB, :onResumeB, :expectInDialog, :closeDialog, :onPauseB, :expectInClosed
+        :onCreateB, :onResumeB, :expectInDialog, :onPauseB, :expectInClosed
     ]
 ]
+
+add_async_events! items, from: :expectInDialog, to: :onPauseB, items:[[:closeDialog], [:cancelDialog]]
 
 add_patterns items

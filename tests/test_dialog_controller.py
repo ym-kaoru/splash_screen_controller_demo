@@ -93,6 +93,10 @@ class TestDialogController(unittest.TestCase):
     def closeDialog(self):
         self.activityB.delegate_instance.closeDialog()
 
+    @run_pending_tasks
+    def cancelDialog(self):
+        self.activityB.delegate_instance.cancelDialog()
+
     def expectInClosed(self):
         self.assertEqual('CLOSED', self.activityB.delegate_instance.state_machine.getCurrentStateName())
 
@@ -118,11 +122,24 @@ class TestDialogController(unittest.TestCase):
         self.onPauseB()
         self.expectInClosed()
 
+    @print_patterns(['onCreateA', 'onResumeA', 'onPauseA', 'onSaveInstanceStateA', 'onCreateB', 'onResumeB', 'expectInDialog', 'cancelDialog', 'onPauseB', 'expectInClosed'])
+    def test_onCreateA_onResumeA_onPauseA_onSaveInstanceStateA_onCreateB_onResumeB_expectInDialog_cancelDialog_onPauseB_expectInClosed(self):
+        self.onCreateA()
+        self.onResumeA()
+        self.onPauseA()
+        self.onSaveInstanceStateA()
+        self.onCreateB()
+        self.onResumeB()
+        self.expectInDialog()
+        self.cancelDialog()
+        self.onPauseB()
+        self.expectInClosed()
+
     @classmethod
     def checkSanity(cls):
         sane = True
         msg = []
-        for method in ['onCreateA', 'onResumeA', 'onPauseA', 'onSaveInstanceStateA', 'onCreateB', 'onResumeB', 'expectInDialog', 'closeDialog', 'onPauseB', 'expectInClosed']:
+        for method in ['onCreateA', 'onResumeA', 'onPauseA', 'onSaveInstanceStateA', 'onCreateB', 'onResumeB', 'expectInDialog', 'closeDialog', 'onPauseB', 'expectInClosed', 'cancelDialog']:
             if not hasattr(cls, method):
                 msg += [
                     '    def %s(self):' % method,
