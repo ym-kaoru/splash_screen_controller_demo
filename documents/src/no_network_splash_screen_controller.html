@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.9.1/styles/default.min.css">
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.9.1/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+</head>
+<body>
+    <h6>no_network_splash_screen_controller-NoNetworkSplashScreenControllerStateMachine.svg</h6>
+    <img src="no_network_splash_screen_controller-NoNetworkSplashScreenControllerStateMachine.svg">
+  <pre><code class="ruby">state_machine(&#39;NoNetworkSplashScreenControllerStateMachine&#39;, name:&#39;state_machine&#39;) {
+    def_event :onCreate =&gt; [arg(&#39;saved_instance_state&#39;, type:&#39;Bundle&#39;)]
+    def_event :onResume, :onPause
+    def_timer :timer1, 1000, pending_if:&#39;not self.parent_context.isResumed()&#39;
+
+    state(:ENTRY_POINT) {
+        onCreate :SPLASH_SCREEN
+    }
+
+    state(:SPLASH_SCREEN, timer: :timer1, entry:&#39;self.parent_context.showSplashScreen()&#39;, exit:&#39;self.parent_context.hideSplashScreen()&#39;) {
+        notify_timer1_timeout :READY
+    }
+
+    state(:READY, entry:&#39;self.parent_context.onReady()&#39;) {
+    }
+}
+</code></pre>
+</body>
+</html>

@@ -1,3 +1,5 @@
+set_class_name 'TestSplashScreenController'
+
 items = [
     [
         :onCreateA, :onResumeA, :onPauseA, :onSaveInstanceStateA,

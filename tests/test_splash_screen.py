@@ -11,6 +11,7 @@ import api_model
 def print_patterns(patterns):
     def wrapper(fn):
         def _(self):
+            print
             print "TEST: %s" % (",".join(patterns))
             fn(self)
         return _
@@ -22,9 +23,9 @@ def run_pending_tasks(fn):
         fn(self)
 
         while len(self.pending_tasks) > 0:
-            pending_tasks = self.pending_tasks
+            pending_tasks = list(self.pending_tasks)
 
-            self.pending_tasks = []
+            self.pending_tasks[:] = []
             for task in pending_tasks:
                 task()  # Maybe added into self.pending_tasks
 
@@ -34,10 +35,10 @@ def run_pending_tasks(fn):
 class TestSplashScreenController(unittest.TestCase):
     def setUp(self):
         super(TestSplashScreenController, self).setUp()
-        self.savedInstanceState = {}
         self.pending_tasks = []
         self.timer_tasks = []
-        self.model = api_model.ApiModel(api_call_limit=1)
+        self.savedInstanceState = {}
+        self.model = api_model.ApiModel(api_call_limit=2)
         self.activityA = stub_android.StubActivity()
         self.activityA.delegate_instance = \
             splash_screen_controller.SplashScreenController(self.activityA, self.model,
@@ -51,9 +52,9 @@ class TestSplashScreenController(unittest.TestCase):
         super(TestSplashScreenController, self).tearDown()
 
     def _run_timer_tasks(self):
-        timer_tasks = self.timer_tasks
+        timer_tasks = list(self.timer_tasks)
 
-        self.timer_tasks = []
+        self.timer_tasks[:] = []
         for task in timer_tasks:
             task()  # Maybe added into self.timer_tasks
 

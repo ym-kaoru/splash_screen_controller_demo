@@ -1,0 +1,12 @@
+set_class_name 'TestNoNetworkSplashScreenController'
+
+items = [
+    [
+        :onCreateA, :onResumeA, :onPauseA, :onSaveInstanceStateA,
+        :onCreateB, :onResumeB, :onPauseB, :expectInReadyState
+    ]
+]
+
+add_async_events! items, from: :onCreateA, to: :onPauseB, items:[[:notifyTimedOut]]
+
+add_patterns items

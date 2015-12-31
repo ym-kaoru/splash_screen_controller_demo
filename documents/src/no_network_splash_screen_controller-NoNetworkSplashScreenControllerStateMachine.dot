@@ -1,0 +1,4 @@
+digraph {
+    ENTRY_POINT -> SPLASH_SCREEN[label="onCreate"]
+    SPLASH_SCREEN -> READY[label="notify_timer1_timeout"]
+}

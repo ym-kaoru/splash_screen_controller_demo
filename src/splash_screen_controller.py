@@ -16,7 +16,6 @@ class SplashScreenController(object):
         self.state_machine = SplashScreenControllerStateMachine(self)
         self.pending_tasks = pending_tasks
         self.timer_tasks = timer_tasks
-        self.dialog = None
 
     def onCreate(self, saved_instance_state):
         self.prepareStateMachine(True, saved_instance_state)
