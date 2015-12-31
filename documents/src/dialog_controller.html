@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.9.1/styles/default.min.css">
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.9.1/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+</head>
+<body>
+    <h6>dialog_controller-SplashScreenControllerStateMachine.svg</h6>
+    <img src="dialog_controller-SplashScreenControllerStateMachine.svg">
+  <pre><code class="ruby">state_machine(&#39;SplashScreenControllerStateMachine&#39;, name:&#39;state_machine&#39;) {
+    def_event :onCreate =&gt; [arg(&#39;saved_instance_state&#39;, type:&#39;Bundle&#39;)]
+    def_event :onResume, :onPause
+    def_public_event :closeDialog, :cancelDialog
+
+    state(:ENTRY_POINT) {
+        onCreate :DIALOG
+    }
+
+    state(:DIALOG, entry:&#39;self.parent_context.show_dialog()&#39;, exit:&#39;self.parent_context.dismiss_dialog()&#39;) {
+        closeDialog :CLOSED
+        cancelDialog :CLOSED
+    }
+
+    state(:CLOSED) {
+
+    }
+}
+</code></pre>
+</body>
+</html>

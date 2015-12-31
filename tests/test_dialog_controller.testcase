@@ -1,0 +1,10 @@
+set_class_name 'TestDialogController'
+
+items = [
+    [
+        :onCreateA, :onResumeA, :onPauseA, :onSaveInstanceStateA,
+        :onCreateB, :onResumeB, :expectInDialog, :closeDialog, :onPauseB, :expectInClosed
+    ]
+]
+
+add_patterns items

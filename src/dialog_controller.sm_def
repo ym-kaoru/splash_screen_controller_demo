@@ -1,0 +1,18 @@
+state_machine('SplashScreenControllerStateMachine', name:'state_machine') {
+    def_event :onCreate => [arg('saved_instance_state', type:'Bundle')]
+    def_event :onResume, :onPause
+    def_public_event :closeDialog, :cancelDialog
+
+    state(:ENTRY_POINT) {
+        onCreate :DIALOG
+    }
+
+    state(:DIALOG, entry:'self.parent_context.show_dialog()', exit:'self.parent_context.dismiss_dialog()') {
+        closeDialog :CLOSED
+        cancelDialog :CLOSED
+    }
+
+    state(:CLOSED) {
+
+    }
+}
