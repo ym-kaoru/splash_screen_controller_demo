@@ -38,7 +38,7 @@ class TestSplashScreenController(unittest.TestCase):
         self.pending_tasks = []
         self.timer_tasks = []
         self.savedInstanceState = {}
-        self.model = api_model.ApiModel(api_call_limit=2)
+        self.model = stub_api_model.ApiModel(api_call_limit=2)
         self.activityA = stub_android.StubActivity()
         self.activityA.delegate_instance = \
             splash_screen_controller.SplashScreenController(self.activityA, self.model,
