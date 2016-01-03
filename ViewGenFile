@@ -5,13 +5,5 @@ gen_config {
 }
 
 asset_config {
-    use :activity_utils
-    use :view_utils
-    use :fragment_utils
-
-  # use :font_manager
-  # use :model_store
-  # use :managed_view_pager
-  # use :webview
-  # use :webview, dest_dir:'app/src/main/java/lab/yumemi/jp/assets/webview2'
+  use :stub_android
 }

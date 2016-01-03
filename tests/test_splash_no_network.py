@@ -6,6 +6,7 @@ import unittest
 import stub_android
 import no_network_splash_screen_controller
 
+
 def print_patterns(patterns):
     def wrapper(fn):
         def _(self):

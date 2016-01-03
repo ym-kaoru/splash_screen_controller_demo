@@ -130,7 +130,7 @@ class SplashScreenControllerStateMachine(object):
             print "SplashScreenControllerStateMachine(%d): %s: %s" % (self.instance_index, msg, SplashScreenControllerStateMachine.STATE_TABLE[state])
 
     def clearPendingState(self):
-        self.mPendingAction = None
+        self.mPendingEvent = None
         self.mPendingPriority = 0
         self.mPendingState = 0
 

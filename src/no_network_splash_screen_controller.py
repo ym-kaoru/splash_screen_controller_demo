@@ -123,7 +123,7 @@ class NoNetworkSplashScreenControllerStateMachine(object):
             print "NoNetworkSplashScreenControllerStateMachine(%d): %s: %s" % (self.instance_index, msg, NoNetworkSplashScreenControllerStateMachine.STATE_TABLE[state])
 
     def clearPendingState(self):
-        self.mPendingAction = None
+        self.mPendingEvent = None
         self.mPendingPriority = 0
         self.mPendingState = 0
 
