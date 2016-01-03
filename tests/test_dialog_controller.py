@@ -3,8 +3,9 @@
 import os
 import sys
 import unittest
-import stub_android
 import dialog_controller
+from assets.stub_android import stub_api_model
+from assets.stub_android import stub_android
 
 
 def print_patterns(patterns):
