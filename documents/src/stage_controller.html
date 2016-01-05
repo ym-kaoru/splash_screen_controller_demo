@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.9.1/styles/default.min.css">
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.9.1/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+</head>
+<body>
+    <h6>stage_controller-StageStateMachine.svg</h6>
+    <img src="stage_controller-StageStateMachine.svg">
+  <pre><code class="ruby">state_machine(&#39;StageStateMachine&#39;, name:&#39;state_machine&#39;) {
+    def_event :onCreate =&gt; [arg(&#39;saved_instance_state&#39;, type:&#39;Bundle&#39;)]
+    def_event :onResume, :onPause
+    def_timer :timer1, 1000, pending_if:&#39;not self.parent_context.isResumed()&#39;
+    def_public_event :click
+
+    state(:ENTRY_POINT, entry:&#39;self.parent_context.setStageNo(0)&#39;) {
+        click :STAGE
+    }
+
+    state(:STAGE, timer: :timer1,
+                  entry:&#39;self.parent_context.setStageNo(self.parent_context.getStateNo() + 1)&#39;,
+                  save:&#39;out_instance_state[&quot;STAGE_NO&quot;] = self.parent_context.getStateNo()&#39;,
+                  restore:&#39;self.parent_context.setStageNo(saved_instance_state[&quot;STAGE_NO&quot;])&#39;) {
+
+        notify_timer1_timeout :STAGE, if:&#39;self.parent_context.getStateNo() &lt; StageController.STAGE_COUNT&#39;
+        notify_timer1_timeout :GAME_OVER
+
+        click :STAGE, if:&#39;self.parent_context.getStateNo() &lt; StageController.STAGE_COUNT&#39;
+        click :GAME_OVER
+    }
+
+    state(:GAME_OVER, entry:&#39;self.parent_context.onGameOver()&#39;) {
+
+    }
+}
+</code></pre>
+</body>
+</html>

@@ -1,0 +1,7 @@
+digraph {
+    ENTRY_POINT -> STAGE[label="click"]
+    STAGE -> STAGE[label="notify_timer1_timeout"]
+    STAGE -> GAME_OVER[label="notify_timer1_timeout"]
+    STAGE -> STAGE[label="click"]
+    STAGE -> GAME_OVER[label="click"]
+}

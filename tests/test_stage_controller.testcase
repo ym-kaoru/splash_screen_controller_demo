@@ -1,0 +1,12 @@
+set_class_name 'TestStageController'
+
+items = [
+    [
+        :onCreateA, :onResumeA, :clickA, :clickA, :onPauseA, :onSaveInstanceStateA,
+        :onCreateB, :onResumeB, :clickB, :onPauseB, :expectInGameOverState
+    ]
+]
+
+# add_async_events! items, from: :onResumeA, to: :onPauseB, items:[[]]
+
+add_patterns items
