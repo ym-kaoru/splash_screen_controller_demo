@@ -5,8 +5,8 @@ import sys
 import unittest
 from assets.stub_android import stub_api_model
 from assets.stub_android import stub_android
-import stage_controller
 
+import stage_controller
 
 def print_patterns(patterns):
     def wrapper(fn):
@@ -100,6 +100,14 @@ class TestStageController(unittest.TestCase):
     def clickB(self):
         self.activityB.delegate_instance.click()
 
+    @run_pending_tasks
+    def notifyTimer1TimeoutA(self):
+        self._run_timer_tasks()
+
+    @run_pending_tasks
+    def notifyTimer1TimeoutB(self):
+        self._run_timer_tasks()
+
     def expectInGameOverState(self):
         self.assertEqual('GAME_OVER', self.activityB.delegate_instance.state_machine.getCurrentStateName())
 
@@ -112,11 +120,10 @@ class TestStageController(unittest.TestCase):
     # https://rubygems.org/gems/test_case_generator
     #
 
-    @print_patterns(['onCreateA', 'onResumeA', 'clickA', 'clickA', 'onPauseA', 'onSaveInstanceStateA', 'onCreateB', 'onResumeB', 'clickB', 'onPauseB', 'expectInGameOverState'])
-    def test_onCreateA_onResumeA_clickA_clickA_onPauseA_onSaveInstanceStateA_onCreateB_onResumeB_clickB_onPauseB_expectInGameOverState(self):
+    @print_patterns(['onCreateA', 'onResumeA', 'clickA', 'onPauseA', 'onSaveInstanceStateA', 'onCreateB', 'onResumeB', 'clickB', 'onPauseB', 'expectInGameOverState'])
+    def test_onCreateA_onResumeA_clickA_onPauseA_onSaveInstanceStateA_onCreateB_onResumeB_clickB_onPauseB_expectInGameOverState(self):
         self.onCreateA()
         self.onResumeA()
-        self.clickA()
         self.clickA()
         self.onPauseA()
         self.onSaveInstanceStateA()
@@ -126,11 +133,26 @@ class TestStageController(unittest.TestCase):
         self.onPauseB()
         self.expectInGameOverState()
 
+    @print_patterns(['onCreateA', 'onResumeA', 'clickA', 'notifyTimer1TimeoutA', 'onPauseA', 'onSaveInstanceStateA', 'onCreateB', 'onResumeB', 'notifyTimer1TimeoutB', 'notifyTimer1TimeoutB', 'onPauseB', 'expectInGameOverState'])
+    def test_onCreateA_onResumeA_clickA_notifyTimer1TimeoutA_onPauseA_onSaveInstanceStateA_onCreateB_onResumeB_notifyTimer1TimeoutB_notifyTimer1TimeoutB_onPauseB_expectInGameOverState(self):
+        self.onCreateA()
+        self.onResumeA()
+        self.clickA()
+        self.notifyTimer1TimeoutA()
+        self.onPauseA()
+        self.onSaveInstanceStateA()
+        self.onCreateB()
+        self.onResumeB()
+        self.notifyTimer1TimeoutB()
+        self.notifyTimer1TimeoutB()
+        self.onPauseB()
+        self.expectInGameOverState()
+
     @classmethod
     def checkSanity(cls):
         sane = True
         msg = []
-        for method in ['onCreateA', 'onResumeA', 'clickA', 'onPauseA', 'onSaveInstanceStateA', 'onCreateB', 'onResumeB', 'clickB', 'onPauseB', 'expectInGameOverState']:
+        for method in ['onCreateA', 'onResumeA', 'clickA', 'onPauseA', 'onSaveInstanceStateA', 'onCreateB', 'onResumeB', 'clickB', 'onPauseB', 'expectInGameOverState', 'notifyTimer1TimeoutA', 'notifyTimer1TimeoutB']:
             if not hasattr(cls, method):
                 msg += [
                     '    def %s(self):' % method,

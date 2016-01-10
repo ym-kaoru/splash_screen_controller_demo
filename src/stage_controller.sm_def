@@ -1,23 +1,30 @@
 state_machine('StageStateMachine', name:'state_machine') {
     def_event :onCreate => [arg('saved_instance_state', type:'Bundle')]
     def_event :onResume, :onPause
-    def_timer :timer1, 1000, pending_if:'not self.parent_context.isResumed()'
+    def_repeat_timer :timer1, 1000    #, pending_if:'not self.parent_context.isResumed()'
     def_public_event :click
 
-    state(:ENTRY_POINT, entry:'self.parent_context.setStageNo(0)') {
-        click :STAGE
+    state(:ENTRY_POINT) {
+        onResume :STAGE
     }
 
-    state(:STAGE, timer: :timer1,
-                  entry:'self.parent_context.setStageNo(self.parent_context.getStateNo() + 1)',
-                  save:'out_instance_state["STAGE_NO"] = self.parent_context.getStateNo()',
-                  restore:'self.parent_context.setStageNo(saved_instance_state["STAGE_NO"])') {
+    state_group(:QUESTION, entry:'self.parent_context.resetCounter(); self.parent_context.setStageNo(0)',
+                           restore:"self.parent_context.stage_no = saved_instance_state['stage_no']; self.parent_context.counter = saved_instance_state['counter']",
+                           save:"out_instance_state['stage_no'] = self.parent_context.stage_no; out_instance_state['counter'] = self.parent_context.counter") {
+        state(:STAGE, timer: :timer1) {
+            notify_timer1_timeout nil, if:'self.parent_context.countDown()', action:'self.parent_context.displayCounter()'
+            notify_timer1_timeout :STAGE, if:'self.parent_context.incrementStage()', action:'self.parent_context.resetCounter()'
+            notify_timer1_timeout :GAME_OVER
 
-        notify_timer1_timeout :STAGE, if:'self.parent_context.getStateNo() < StageController.STAGE_COUNT'
-        notify_timer1_timeout :GAME_OVER
+            click :STAGE, if:'self.parent_context.incrementStage()'
+            click :GAME_OVER
 
-        click :STAGE, if:'self.parent_context.getStateNo() < StageController.STAGE_COUNT'
-        click :GAME_OVER
+            onPause :PAUSED
+        }
+
+        state(:PAUSED) {
+            onResume :STAGE
+        }
     }
 
     state(:GAME_OVER, entry:'self.parent_context.onGameOver()') {

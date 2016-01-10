@@ -164,10 +164,12 @@ class NoNetworkSplashScreenControllerStateMachine(object):
             break
 
         out_instance_state['mCurrentState'] = self.mCurrentState
+        out_instance_state['mGroupState'] = self.mGroupState
         self.debugPrintCurrentState('SAVE STATE')
 
     def restoreInstanceState(self, saved_instance_state):
         self.mCurrentState = saved_instance_state['mCurrentState']
+        self.mGroupState = saved_instance_state['mGroupState']
         self.debugPrintCurrentState('RESTORE STATE')
 
         while True:

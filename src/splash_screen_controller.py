@@ -208,11 +208,15 @@ class SplashScreenControllerStateMachine(object):
             break
 
         out_instance_state['mCurrentState'] = self.mCurrentState
+        out_instance_state['mGroupState'] = self.mGroupState
+        if self.mGroupState[SplashScreenControllerStateMachine.GROUP_SPLASH_SCREEN]:
         self.debugPrintCurrentState('SAVE STATE')
 
     def restoreInstanceState(self, saved_instance_state):
         self.mCurrentState = saved_instance_state['mCurrentState']
+        self.mGroupState = saved_instance_state['mGroupState']
         self.debugPrintCurrentState('RESTORE STATE')
+        if self.mGroupState[SplashScreenControllerStateMachine.GROUP_SPLASH_SCREEN]:
 
         while True:
             if self.mCurrentState == SplashScreenControllerStateMachine.WAITING_FOR_API:

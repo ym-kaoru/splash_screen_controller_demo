@@ -15,10 +15,19 @@ class StageController(object):
         self.state_machine = None
         self.constructStateMachine()
         self.stage_no = 0
+        self.counter = 0
 
     def onCreate(self, saved_instance_state):
+        # if saved_instance_state is not None:
+        #     self.stage_no = saved_instance_state['stage_no']
+        #     self.counter = saved_instance_state['counter']
         self.prepareStateMachine(True, saved_instance_state)
         self.state_machine.onCreate(saved_instance_state)
+
+    def onSaveInstanceState(self, out_instance_state):
+        self.saveStateMachine(out_instance_state)
+        # out_instance_state['stage_no'] = self.stage_no
+        # out_instance_state['counter'] = self.counter
 
     def onStart(self):
         pass
@@ -32,20 +41,41 @@ class StageController(object):
     def isResumed(self):
         return self.activity.isResumed()
 
-    def onSaveInstanceState(self, out_instance_state):
-        self.saveStateMachine(out_instance_state)
-
     def onStop(self):
         pass
 
     def onDestroy(self):
         pass
 
+    def resetCounter(self):
+        self.counter = 2
+        print "    self.counter=%d" % self.counter
+
+    def countDown(self):
+        if self.counter > 0:
+            self.counter -= 1
+            print "    self.counter=%d" % self.counter
+            return True
+        else:
+            return False
+
+    def displayCounter(self):
+        print "    DISPLAY: self.counter=%d" % self.counter
+
+    def incrementStage(self):
+        if self.stage_no + 1 < StageController.STAGE_COUNT:
+            self.stage_no += 1
+            print "    self.stage_no=%d" % self.stage_no
+            return True
+        else:
+            return False
+
     def getStateNo(self):
         return self.stage_no
 
     def setStageNo(self, stage_no):
         self.stage_no = stage_no
+        print "    self.stage_no=%d" % self.stage_no
 
     def onGameOver(self):
         pass
@@ -96,7 +126,10 @@ class StageStateMachine(object):
 
     ENTRY_POINT = 0
     STAGE = 1
-    GAME_OVER = 2
+    PAUSED = 2
+    GAME_OVER = 3
+
+    GROUP_QUESTION = 0
 
     def __init__(self, parent_context):
         super(StageStateMachine, self).__init__()
@@ -106,7 +139,7 @@ class StageStateMachine(object):
         self.mDebugFlag = False
         self.mInTransition = False
         self.mCurrentState = 0
-        self.mGroupState = []
+        self.mGroupState = [False]
         self.mPendingState = 0
         self.mPendingEvent = None
         self.mPendingPriority = 0
@@ -151,37 +184,30 @@ class StageStateMachine(object):
     def enterStartState(self):
         self.debugPrintCurrentState('START STATE')
         self.clearPendingState()
-        self.parent_context.setStageNo(0)
 
     def evaluatePendingCondition(self):
         if self.mPendingEvent is None or self.mPendingState == 0:
             return
 
-        # notify_timer1_timeout
-        if self.mPendingState == 5:
-            if not self.parent_context.isResumed():
-                return
-
-            pending_event = self.mPendingEvent
-            self.clearPendingState()
-            pending_event()
-
     def saveInstanceState(self, out_instance_state):
         while True:
-            if self.mCurrentState == StageStateMachine.STAGE:
-                out_instance_state["STAGE_NO"] = self.parent_context.getStateNo()
             break
 
         out_instance_state['mCurrentState'] = self.mCurrentState
+        out_instance_state['mGroupState'] = self.mGroupState
+        if self.mGroupState[StageStateMachine.GROUP_QUESTION]:
+            out_instance_state['stage_no'] = self.parent_context.stage_no; out_instance_state['counter'] = self.parent_context.counter
         self.debugPrintCurrentState('SAVE STATE')
 
     def restoreInstanceState(self, saved_instance_state):
         self.mCurrentState = saved_instance_state['mCurrentState']
+        self.mGroupState = saved_instance_state['mGroupState']
         self.debugPrintCurrentState('RESTORE STATE')
+        if self.mGroupState[StageStateMachine.GROUP_QUESTION]:
+            self.parent_context.stage_no = saved_instance_state['stage_no']; self.parent_context.counter = saved_instance_state['counter']
 
         while True:
             if self.mCurrentState == StageStateMachine.STAGE:
-                self.parent_context.setStageNo(saved_instance_state["STAGE_NO"])
                 self.startTimer1()
             break
 
@@ -214,6 +240,19 @@ class StageStateMachine(object):
             print '  onResume'
 
         while True:
+            if self.mCurrentState == StageStateMachine.ENTRY_POINT:
+                self.setCurrentState(StageStateMachine.STAGE)
+                self.startTimer1()
+                # Enter group QUESTION
+                self.mGroupState[StageStateMachine.GROUP_QUESTION] = True
+                self.parent_context.resetCounter(); self.parent_context.setStageNo(0)
+                break
+
+            if self.mCurrentState == StageStateMachine.PAUSED:
+                self.setCurrentState(StageStateMachine.STAGE)
+                self.startTimer1()
+                break
+
             # default
             break
 
@@ -231,15 +270,17 @@ class StageStateMachine(object):
             print '  onPause'
 
         while True:
+            if self.mCurrentState == StageStateMachine.STAGE:
+                self.cancelTimer1()
+                self.setCurrentState(StageStateMachine.PAUSED)
+                break
+
             # default
             break
 
         self.mInTransition = False
 
     def notifyTimer1Timeout(self):
-        if not self.parent_context.isResumed():
-            raise RuntimeError('Violation of the pending condition')
-
         if self.mInTransition:
             raise RuntimeError("inTransition must be false. HINT: Use postNotifyTimer1Timeout.")
 
@@ -252,13 +293,17 @@ class StageStateMachine(object):
 
         while True:
             if self.mCurrentState == StageStateMachine.STAGE:
-                if self.parent_context.getStateNo() < StageController.STAGE_COUNT:
+                if self.parent_context.countDown():
+                    self.parent_context.displayCounter()
+                elif self.parent_context.incrementStage():
                     self.cancelTimer1()
+                    self.parent_context.resetCounter()
                     self.setCurrentState(StageStateMachine.STAGE)
-                    self.parent_context.setStageNo(self.parent_context.getStateNo() + 1)
                     self.startTimer1()
                 else:
                     self.cancelTimer1()
+                    # Leave group QUESTION
+                    self.mGroupState[StageStateMachine.GROUP_QUESTION] = False
                     self.setCurrentState(StageStateMachine.GAME_OVER)
                     self.parent_context.onGameOver()
                 break
@@ -280,20 +325,15 @@ class StageStateMachine(object):
             print '  click'
 
         while True:
-            if self.mCurrentState == StageStateMachine.ENTRY_POINT:
-                self.setCurrentState(StageStateMachine.STAGE)
-                self.parent_context.setStageNo(self.parent_context.getStateNo() + 1)
-                self.startTimer1()
-                break
-
             if self.mCurrentState == StageStateMachine.STAGE:
-                if self.parent_context.getStateNo() < StageController.STAGE_COUNT:
+                if self.parent_context.incrementStage():
                     self.cancelTimer1()
                     self.setCurrentState(StageStateMachine.STAGE)
-                    self.parent_context.setStageNo(self.parent_context.getStateNo() + 1)
                     self.startTimer1()
                 else:
                     self.cancelTimer1()
+                    # Leave group QUESTION
+                    self.mGroupState[StageStateMachine.GROUP_QUESTION] = False
                     self.setCurrentState(StageStateMachine.GAME_OVER)
                     self.parent_context.onGameOver()
                 break
@@ -306,14 +346,8 @@ class StageStateMachine(object):
     def timer1Runner(self):
         def _():
             self.notifyTimer1Timeout()
-
-        if not self.parent_context.isResumed():
-            if self.mPendingPriority <= 0:
-                self.mPendingEvent = _
-                self.mPendingState = 5
-                self.mPendingPriority = 0
-        else:
-            _()
+            self.parent_context.postDelayed(_, 1000);
+        _()
 
     def startTimer1(self):
         self.timer1RunnerId = self.parent_context.postDelayed(self.timer1Runner, 1000)
@@ -321,4 +355,4 @@ class StageStateMachine(object):
     def cancelTimer1(self):
         self.parent_context.removeCallbacks(self.timer1RunnerId)
 
-    STATE_TABLE = ["ENTRY_POINT", "STAGE", "GAME_OVER"]
+    STATE_TABLE = ["ENTRY_POINT", "STAGE", "PAUSED", "GAME_OVER"]
