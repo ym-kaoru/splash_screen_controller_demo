@@ -2,8 +2,8 @@
 import os
 import sys
 
-import stub_android
-import api_model
+from assets.stub_android import stub_api_model
+from assets.stub_android import stub_android
 
 TAG="Controller"
 
@@ -205,8 +205,6 @@ class SplashScreenControllerStateMachine(object):
 
     def saveInstanceState(self, out_instance_state):
         while True:
-            if self.mCurrentState == SplashScreenControllerStateMachine.WAITING_FOR_API:
-                self.cancelTimer1()
             break
 
         out_instance_state['mCurrentState'] = self.mCurrentState

@@ -161,8 +161,6 @@ class NoNetworkSplashScreenControllerStateMachine(object):
 
     def saveInstanceState(self, out_instance_state):
         while True:
-            if self.mCurrentState == NoNetworkSplashScreenControllerStateMachine.SPLASH_SCREEN:
-                self.cancelTimer1()
             break
 
         out_instance_state['mCurrentState'] = self.mCurrentState

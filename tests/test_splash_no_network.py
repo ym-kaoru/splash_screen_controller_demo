@@ -80,7 +80,6 @@ class TestNoNetworkSplashScreenController(unittest.TestCase):
     @run_pending_tasks
     def onResumeB(self):
         self.activityB.onResume()
-        self._run_timer_tasks()
 
     @run_pending_tasks
     def notifyTimedOut(self):
@@ -88,6 +87,9 @@ class TestNoNetworkSplashScreenController(unittest.TestCase):
 
     @run_pending_tasks
     def onPauseB(self):
+        # Run remaining timer events
+        self._run_timer_tasks()
+
         self.activityB.onPause()
 
     def expectInReadyState(self):

@@ -169,7 +169,6 @@ class StageStateMachine(object):
     def saveInstanceState(self, out_instance_state):
         while True:
             if self.mCurrentState == StageStateMachine.STAGE:
-                self.cancelTimer1()
                 out_instance_state["STAGE_NO"] = self.parent_context.getStateNo()
             break
 
