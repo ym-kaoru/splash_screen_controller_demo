@@ -483,9 +483,9 @@ class SplashScreenControllerStateMachine(object):
             _()
 
     def startTimer1(self):
-        self.timer1RunnerId = self.parent_context.postDelayed(self.timer1Runner, 1000)
+        self.parent_context.postDelayed(self.timer1Runner, 1000)
 
     def cancelTimer1(self):
-        self.parent_context.removeCallbacks(self.timer1RunnerId)
+        self.parent_context.removeCallbacks(self.timer1Runner)
 
     STATE_TABLE = ["ENTRY_POINT", "WAITING_FOR_API", "ERROR_DIALOG", "READY"]

@@ -3,12 +3,26 @@ import os
 import sys
 
 
+def print_task_status(action):
+    def decorate(fn):
+        def _(self, *args):
+            fn(self, *args)
+            print "    %s(%d) PENDING:%d TIMER:%d" % (action, self.instance_index, len(self.pending_tasks), len(self.timer_tasks))
+        return _
+    return decorate
+
+
 class StageController(object):
 
+    instance_counter = 0
     STAGE_COUNT = 2
 
     def __init__(self, activity, pending_tasks, timer_tasks):
         super(StageController, self).__init__()
+
+        self.instance_index = StageController.instance_counter
+        StageController.instance_counter += 1
+
         self.activity = activity
         self.pending_tasks = pending_tasks
         self.timer_tasks = timer_tasks
@@ -80,15 +94,27 @@ class StageController(object):
     def onGameOver(self):
         pass
 
+    @print_task_status("post")
     def post(self, action):
+        if action is None:
+            raise RuntimeError("action is None")
+
         self.pending_tasks.append(action)
         return action
 
+    @print_task_status("postDelayed")
     def postDelayed(self, action, delayMillis):
+        if action is None:
+            raise RuntimeError("action is None")
+
         self.timer_tasks.append(action)
         return action
 
+    @print_task_status("removeCallbacks")
     def removeCallbacks(self, task_id):
+        if task_id is None:
+            raise RuntimeError("task_id is None")
+
         self.pending_tasks[:] = [action for action in self.pending_tasks if action != task_id]
         self.timer_tasks[:] = [action for action in self.timer_tasks if action != task_id]
 
@@ -189,6 +215,15 @@ class StageStateMachine(object):
         if self.mPendingEvent is None or self.mPendingState == 0:
             return
 
+        # notify_timer1_timeout
+        if self.mPendingState == 5:
+            if not self.parent_context.isResumed():
+                return
+
+            pending_event = self.mPendingEvent
+            self.clearPendingState()
+            pending_event()
+
     def saveInstanceState(self, out_instance_state):
         while True:
             break
@@ -281,6 +316,9 @@ class StageStateMachine(object):
         self.mInTransition = False
 
     def notifyTimer1Timeout(self):
+        if not self.parent_context.isResumed():
+            raise RuntimeError('Violation of the pending condition')
+
         if self.mInTransition:
             raise RuntimeError("inTransition must be false. HINT: Use postNotifyTimer1Timeout.")
 
@@ -346,13 +384,20 @@ class StageStateMachine(object):
     def timer1Runner(self):
         def _():
             self.notifyTimer1Timeout()
-            self.parent_context.postDelayed(_, 1000);
-        _()
+            self.parent_context.postDelayed(self.timer1Runner, 1000);
+
+        if not self.parent_context.isResumed():
+            if self.mPendingPriority <= 0:
+                self.mPendingEvent = _
+                self.mPendingState = 5
+                self.mPendingPriority = 0
+        else:
+            _()
 
     def startTimer1(self):
-        self.timer1RunnerId = self.parent_context.postDelayed(self.timer1Runner, 1000)
+        self.parent_context.postDelayed(self.timer1Runner, 1000)
 
     def cancelTimer1(self):
-        self.parent_context.removeCallbacks(self.timer1RunnerId)
+        self.parent_context.removeCallbacks(self.timer1Runner)
 
     STATE_TABLE = ["ENTRY_POINT", "STAGE", "PAUSED", "GAME_OVER"]

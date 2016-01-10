@@ -5,8 +5,10 @@ import sys
 import unittest
 from assets.stub_android import stub_api_model
 from assets.stub_android import stub_android
+from stage_controller import print_task_status
 
 import stage_controller
+
 
 def print_patterns(patterns):
     def wrapper(fn):
@@ -37,6 +39,7 @@ def run_pending_tasks(fn):
 class TestStageController(unittest.TestCase):
     def setUp(self):
         super(TestStageController, self).setUp()
+        self.instance_index = -1
         self.pending_tasks = []
         self.timer_tasks = []
         self.savedInstanceState = {}
@@ -52,6 +55,7 @@ class TestStageController(unittest.TestCase):
     def tearDown(self):
         super(TestStageController, self).tearDown()
 
+    @print_task_status("_run_timer_tasks")
     def _run_timer_tasks(self):
         timer_tasks = list(self.timer_tasks)
         self.timer_tasks[:] = []
