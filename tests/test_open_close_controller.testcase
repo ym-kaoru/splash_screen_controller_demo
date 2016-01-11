@@ -1,0 +1,12 @@
+set_class_name 'TestOpenCloseController'
+
+items = [
+    [
+        :onCreateA, :startToOpen, :onResumeA, :close, :open, :onPauseA, :onSaveInstanceStateA,
+        :onCreateB, :onResumeB, :onPauseB, :expectInOpen
+    ]
+]
+
+#add_async_events! items, from: :expectInDialog, to: :onPauseB, items:[[:closeDialog], [:cancelDialog]]
+
+add_patterns items

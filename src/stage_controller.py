@@ -215,15 +215,6 @@ class StageStateMachine(object):
         if self.mPendingEvent is None or self.mPendingState == 0:
             return
 
-        # notify_timer1_timeout
-        if self.mPendingState == 5:
-            if not self.parent_context.isResumed():
-                return
-
-            pending_event = self.mPendingEvent
-            self.clearPendingState()
-            pending_event()
-
     def saveInstanceState(self, out_instance_state):
         while True:
             break
@@ -316,9 +307,6 @@ class StageStateMachine(object):
         self.mInTransition = False
 
     def notifyTimer1Timeout(self):
-        if not self.parent_context.isResumed():
-            raise RuntimeError('Violation of the pending condition')
-
         if self.mInTransition:
             raise RuntimeError("inTransition must be false. HINT: Use postNotifyTimer1Timeout.")
 
@@ -382,17 +370,8 @@ class StageStateMachine(object):
         self.mInTransition = False
 
     def timer1Runner(self):
-        def _():
-            self.notifyTimer1Timeout()
-            self.parent_context.postDelayed(self.timer1Runner, 1000);
-
-        if not self.parent_context.isResumed():
-            if self.mPendingPriority <= 0:
-                self.mPendingEvent = _
-                self.mPendingState = 5
-                self.mPendingPriority = 0
-        else:
-            _()
+        self.notifyTimer1Timeout()
+        self.parent_context.postDelayed(self.timer1Runner, 1000);
 
     def startTimer1(self):
         self.parent_context.postDelayed(self.timer1Runner, 1000)

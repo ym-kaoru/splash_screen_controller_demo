@@ -1,0 +1,41 @@
+state_machine('OpenCloseStateMachine', name:'state_machine') {
+    def_public_event :open => [arg('animated', type:'boolean')]
+    def_public_event :close => [arg('animated', type:'boolean')]
+    def_public_event :toggle => [arg('animated', type:'boolean')]
+    def_public_event :startToOpen, :startToClose
+    def_event :notifyAnimationFinished
+
+    state(:ENTRY_POINT) {
+        startToOpen :OPEN
+        startToClose :CLOSED
+    }
+
+    state_group(:ANTENNA_INVISIBLE, entry:'self.parent_context.hideAntenna()') {
+        state(:CLOSED) {
+            open :ANIMATING_CLOSE_TO_OPEN, if:'animated'
+            open :OPEN
+            toggle :ANIMATING_CLOSE_TO_OPEN, if:'animated'
+            toggle :OPEN
+        }
+    }
+
+    state_group(:ANTENNA_VISIBLE, entry:'self.parent_context.showAntenna()') {
+        state(:OPEN) {
+            close :ANIMATING_OPEN_TO_CLOSE, if:'animated'
+            close :CLOSED
+            toggle :ANIMATING_OPEN_TO_CLOSE, if:'animated'
+            toggle :CLOSED
+        }
+
+        state_group(:IN_TRANSITION, entry:'self.parent_context.setAnimating(True)',
+                                    exit:'self.parent_context.setAnimating(False)') {
+            state(:ANIMATING_CLOSE_TO_OPEN, entry:'self.parent_context.startAnimationCloseToOpen()') {
+                notifyAnimationFinished :OPEN
+            }
+
+            state(:ANIMATING_OPEN_TO_CLOSE, entry:'self.parent_context.startAnimationOpenToClose()') {
+                notifyAnimationFinished :CLOSED
+            }
+        }
+    }
+}
