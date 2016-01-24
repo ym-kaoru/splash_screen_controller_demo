@@ -3,6 +3,9 @@ state_machine('StageStateMachine', name:'state_machine') {
     def_event :onResume, :onPause
     def_repeat_timer :timer1, 1000    #, pending_if:'not self.parent_context.isResumed()'
     def_public_event :click
+    def_event :notifyAnimationFinished
+    def_event :cancelDialog
+    def_event :closeDialog
 
     state(:ENTRY_POINT) {
         onResume :STAGE
@@ -13,11 +16,18 @@ state_machine('StageStateMachine', name:'state_machine') {
                            save:"out_instance_state['stage_no'] = self.parent_context.stage_no; out_instance_state['counter'] = self.parent_context.counter") {
         state(:STAGE, timer: :timer1) {
             notify_timer1_timeout nil, if:'self.parent_context.countDown()', action:'self.parent_context.displayCounter()'
-            notify_timer1_timeout :STAGE, if:'self.parent_context.incrementStage()', action:'self.parent_context.resetCounter()'
-            notify_timer1_timeout :GAME_OVER
+            notify_timer1_timeout :DISPLAYING_WARNING, if:'self.parent_context.incrementStage()', action:'self.parent_context.resetCounter()'
+            notify_timer1_timeout :GAME_OVER_DIALOG
 
             click :STAGE, if:'self.parent_context.incrementStage()'
-            click :GAME_OVER
+            click :GAME_OVER_DIALOG
+
+            onPause :PAUSED
+        }
+
+        state(:DISPLAYING_WARNING) {
+            notifyAnimationFinished :STAGE
+            click :STAGE
 
             onPause :PAUSED
         }
@@ -25,6 +35,11 @@ state_machine('StageStateMachine', name:'state_machine') {
         state(:PAUSED) {
             onResume :STAGE
         }
+    }
+
+    state(:GAME_OVER_DIALOG, entry:'self.parent_context.openGameOverDialog()') {
+        cancelDialog :GAME_OVER
+        closeDialog :GAME_OVER
     }
 
     state(:GAME_OVER, entry:'self.parent_context.onGameOver()') {

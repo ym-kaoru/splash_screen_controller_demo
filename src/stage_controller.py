@@ -63,12 +63,12 @@ class StageController(object):
 
     def resetCounter(self):
         self.counter = 2
-        print "    self.counter=%d" % self.counter
+        print "    resetCounter: self.counter=%d" % self.counter
 
     def countDown(self):
         if self.counter > 0:
             self.counter -= 1
-            print "    self.counter=%d" % self.counter
+            print "    countDown: self.counter=%d" % self.counter
             return True
         else:
             return False
@@ -92,6 +92,9 @@ class StageController(object):
         print "    self.stage_no=%d" % self.stage_no
 
     def onGameOver(self):
+        pass
+
+    def openGameOverDialog(self):
         pass
 
     @print_task_status("post")
@@ -152,8 +155,10 @@ class StageStateMachine(object):
 
     ENTRY_POINT = 0
     STAGE = 1
-    PAUSED = 2
-    GAME_OVER = 3
+    DISPLAYING_WARNING = 2
+    PAUSED = 3
+    GAME_OVER_DIALOG = 4
+    GAME_OVER = 5
 
     GROUP_QUESTION = 0
 
@@ -301,6 +306,10 @@ class StageStateMachine(object):
                 self.setCurrentState(StageStateMachine.PAUSED)
                 break
 
+            if self.mCurrentState == StageStateMachine.DISPLAYING_WARNING:
+                self.setCurrentState(StageStateMachine.PAUSED)
+                break
+
             # default
             break
 
@@ -324,14 +333,13 @@ class StageStateMachine(object):
                 elif self.parent_context.incrementStage():
                     self.cancelTimer1()
                     self.parent_context.resetCounter()
-                    self.setCurrentState(StageStateMachine.STAGE)
-                    self.startTimer1()
+                    self.setCurrentState(StageStateMachine.DISPLAYING_WARNING)
                 else:
                     self.cancelTimer1()
                     # Leave group QUESTION
                     self.mGroupState[StageStateMachine.GROUP_QUESTION] = False
-                    self.setCurrentState(StageStateMachine.GAME_OVER)
-                    self.parent_context.onGameOver()
+                    self.setCurrentState(StageStateMachine.GAME_OVER_DIALOG)
+                    self.parent_context.openGameOverDialog()
                 break
 
             # default
@@ -360,8 +368,79 @@ class StageStateMachine(object):
                     self.cancelTimer1()
                     # Leave group QUESTION
                     self.mGroupState[StageStateMachine.GROUP_QUESTION] = False
-                    self.setCurrentState(StageStateMachine.GAME_OVER)
-                    self.parent_context.onGameOver()
+                    self.setCurrentState(StageStateMachine.GAME_OVER_DIALOG)
+                    self.parent_context.openGameOverDialog()
+                break
+
+            if self.mCurrentState == StageStateMachine.DISPLAYING_WARNING:
+                self.setCurrentState(StageStateMachine.STAGE)
+                self.startTimer1()
+                break
+
+            # default
+            break
+
+        self.mInTransition = False
+
+    def notifyAnimationFinished(self):
+        if self.mInTransition:
+            raise RuntimeError("inTransition must be false. HINT: Use postNotifyAnimationFinished.")
+
+        self.evaluatePendingCondition()
+
+        self.mInTransition = True
+
+        if self.getDebugLevel() >= 2:
+            print '  notifyAnimationFinished'
+
+        while True:
+            if self.mCurrentState == StageStateMachine.DISPLAYING_WARNING:
+                self.setCurrentState(StageStateMachine.STAGE)
+                self.startTimer1()
+                break
+
+            # default
+            break
+
+        self.mInTransition = False
+
+    def cancelDialog(self):
+        if self.mInTransition:
+            raise RuntimeError("inTransition must be false. HINT: Use postCancelDialog.")
+
+        self.evaluatePendingCondition()
+
+        self.mInTransition = True
+
+        if self.getDebugLevel() >= 2:
+            print '  cancelDialog'
+
+        while True:
+            if self.mCurrentState == StageStateMachine.GAME_OVER_DIALOG:
+                self.setCurrentState(StageStateMachine.GAME_OVER)
+                self.parent_context.onGameOver()
+                break
+
+            # default
+            break
+
+        self.mInTransition = False
+
+    def closeDialog(self):
+        if self.mInTransition:
+            raise RuntimeError("inTransition must be false. HINT: Use postCloseDialog.")
+
+        self.evaluatePendingCondition()
+
+        self.mInTransition = True
+
+        if self.getDebugLevel() >= 2:
+            print '  closeDialog'
+
+        while True:
+            if self.mCurrentState == StageStateMachine.GAME_OVER_DIALOG:
+                self.setCurrentState(StageStateMachine.GAME_OVER)
+                self.parent_context.onGameOver()
                 break
 
             # default
@@ -379,4 +458,4 @@ class StageStateMachine(object):
     def cancelTimer1(self):
         self.parent_context.removeCallbacks(self.timer1Runner)
 
-    STATE_TABLE = ["ENTRY_POINT", "STAGE", "PAUSED", "GAME_OVER"]
+    STATE_TABLE = ["ENTRY_POINT", "STAGE", "DISPLAYING_WARNING", "PAUSED", "GAME_OVER_DIALOG", "GAME_OVER"]

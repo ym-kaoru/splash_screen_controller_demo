@@ -152,6 +152,24 @@ class TestStageController(unittest.TestCase):
         self.onPauseB()
         self.expectInGameOverState()
 
+    @print_patterns(['onCreateA', 'onResumeA', 'notifyTimer1TimeoutA', 'notifyTimer1TimeoutA', 'notifyTimer1TimeoutA', 'clickA', 'notifyTimer1TimeoutA', 'onPauseA', 'onSaveInstanceStateA', 'onCreateB', 'onResumeB', 'notifyTimer1TimeoutB', 'notifyTimer1TimeoutB', 'onPauseB', 'expectInGameOverState'])
+    def test_onCreateA_onResumeA_notifyTimer1TimeoutA_notifyTimer1TimeoutA_notifyTimer1TimeoutA_clickA_notifyTimer1TimeoutA_onPauseA_onSaveInstanceStateA_onCreateB_onResumeB_notifyTimer1TimeoutB_notifyTimer1TimeoutB_onPauseB_expectInGameOverState(self):
+        self.onCreateA()
+        self.onResumeA()
+        self.notifyTimer1TimeoutA()
+        self.notifyTimer1TimeoutA()
+        self.notifyTimer1TimeoutA()
+        self.clickA()
+        self.notifyTimer1TimeoutA()
+        self.onPauseA()
+        self.onSaveInstanceStateA()
+        self.onCreateB()
+        self.onResumeB()
+        self.notifyTimer1TimeoutB()
+        self.notifyTimer1TimeoutB()
+        self.onPauseB()
+        self.expectInGameOverState()
+
     @classmethod
     def checkSanity(cls):
         sane = True
