@@ -22,12 +22,6 @@ class CameraController(object):
     def onStart(self):
         pass
 
-    def onResume(self):
-        self.mStateMachine.onResume()
-
-    def onPause(self):
-        self.mStateMachine.onPause()
-
     def isResumed(self):
         return self.activity.isResumed()
 
@@ -98,6 +92,12 @@ class CameraController(object):
         self.mStateMachine.saveInstanceState(out_instance_state['mStateMachine'])
 
     # Public method for CameraStateMachine
+
+    def onResume(self):
+        self.mStateMachine.onResume()
+
+    def onPause(self):
+        self.mStateMachine.onPause()
 
     def surfaceCreated(self):
         self.mStateMachine.surfaceCreated()
@@ -198,25 +198,6 @@ class CameraStateMachine(object):
 
         while True:
             break
-
-    def onCreate(self, saved_instance_state):
-        if self.mInTransition:
-            raise RuntimeError("inTransition must be false. HINT: Use postOnCreate.")
-
-        self.evaluatePendingCondition()
-
-        self.mInTransition = True
-
-        try:
-            if self.getDebugLevel() >= 2:
-                print '  onCreate'
-
-            while True:
-                # default
-                break
-
-        finally:
-            self.mInTransition = False
 
     def onResume(self):
         if self.mInTransition:
@@ -352,6 +333,48 @@ class CameraStateMachine(object):
         finally:
             self.mInTransition = False
 
+    def takePicture(self):
+        if self.mInTransition:
+            raise RuntimeError("inTransition must be false. HINT: Use postTakePicture.")
+
+        self.evaluatePendingCondition()
+
+        self.mInTransition = True
+
+        try:
+            if self.getDebugLevel() >= 2:
+                print '  takePicture'
+
+            while True:
+                if self.mCurrentState == CameraStateMachine.PREVIEWING:
+                    self.parent_context.onTakePicture()
+                    break
+
+                # default
+                break
+
+        finally:
+            self.mInTransition = False
+
+    def onCreate(self, saved_instance_state):
+        if self.mInTransition:
+            raise RuntimeError("inTransition must be false. HINT: Use postOnCreate.")
+
+        self.evaluatePendingCondition()
+
+        self.mInTransition = True
+
+        try:
+            if self.getDebugLevel() >= 2:
+                print '  onCreate'
+
+            while True:
+                # default
+                break
+
+        finally:
+            self.mInTransition = False
+
     def setParameters(self, parameters):
         if self.mInTransition:
             raise RuntimeError("inTransition must be false. HINT: Use postSetParameters.")
@@ -424,29 +447,6 @@ class CameraStateMachine(object):
             self.notifyAutoFocusFinished()
 
         self.parent_context.post(_)
-
-    def takePicture(self):
-        if self.mInTransition:
-            raise RuntimeError("inTransition must be false. HINT: Use postTakePicture.")
-
-        self.evaluatePendingCondition()
-
-        self.mInTransition = True
-
-        try:
-            if self.getDebugLevel() >= 2:
-                print '  takePicture'
-
-            while True:
-                if self.mCurrentState == CameraStateMachine.PREVIEWING:
-                    self.parent_context.onTakePicture()
-                    break
-
-                # default
-                break
-
-        finally:
-            self.mInTransition = False
 
     def notifyCameraOpen(self):
         if self.mInTransition:

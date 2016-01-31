@@ -1,11 +1,13 @@
 state_machine('CameraStateMachine', name:'mStateMachine') {
-    def_event :onCreate => [arg('saved_instance_state', type:'Bundle')]
-    def_event :onResume, :onPause
+    def_public_event :onResume, :onPause
     def_public_event :surfaceCreated, :surfaceChanged, :surfaceDestroyed
+    def_public_event :takePicture
+
+    def_event :onCreate => [arg('saved_instance_state', type:'Bundle')]
+
     def_event :setParameters => [ arg('parameters', type:'Camera.Parameters') ]
     def_event :requestAutoFocus
     def_async_event :notifyAutoFocusFinished
-    def_public_event :takePicture
     def_async_event :notifyCameraOpen
     def_async_event :notifyCameraUnavailable
 
