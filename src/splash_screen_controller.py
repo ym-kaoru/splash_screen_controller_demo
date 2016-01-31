@@ -230,23 +230,25 @@ class SplashScreenControllerStateMachine(object):
 
         self.mInTransition = True
 
-        if self.getDebugLevel() >= 2:
-            print '  onCreate'
+        try:
+            if self.getDebugLevel() >= 2:
+                print '  onCreate'
 
-        while True:
-            if self.mCurrentState == SplashScreenControllerStateMachine.ENTRY_POINT:
-                self.setCurrentState(SplashScreenControllerStateMachine.WAITING_FOR_API)
-                self.startTimer1()
-                # Enter group SPLASH_SCREEN
-                self.mGroupState[SplashScreenControllerStateMachine.GROUP_SPLASH_SCREEN] = True
-                self.parent_context.showSplashScreen()
-                self.postCheckApi()
+            while True:
+                if self.mCurrentState == SplashScreenControllerStateMachine.ENTRY_POINT:
+                    self.setCurrentState(SplashScreenControllerStateMachine.WAITING_FOR_API)
+                    self.startTimer1()
+                    # Enter group SPLASH_SCREEN
+                    self.mGroupState[SplashScreenControllerStateMachine.GROUP_SPLASH_SCREEN] = True
+                    self.parent_context.showSplashScreen()
+                    self.postCheckApi()
+                    break
+
+                # default
                 break
 
-            # default
-            break
-
-        self.mInTransition = False
+        finally:
+            self.mInTransition = False
 
     def onResume(self):
         if self.mInTransition:
@@ -256,24 +258,26 @@ class SplashScreenControllerStateMachine(object):
 
         self.mInTransition = True
 
-        if self.getDebugLevel() >= 2:
-            print '  onResume'
+        try:
+            if self.getDebugLevel() >= 2:
+                print '  onResume'
 
-        while True:
-            if self.mCurrentState == SplashScreenControllerStateMachine.WAITING_FOR_API:
-                if self.parent_context.isResponseAvailable():
-                    self.cancelTimer1()
-                    # Leave group SPLASH_SCREEN
-                    self.mGroupState[SplashScreenControllerStateMachine.GROUP_SPLASH_SCREEN] = False
-                    self.parent_context.hideSplashScreen()
-                    self.setCurrentState(SplashScreenControllerStateMachine.READY)
-                    self.parent_context.onReady()
+            while True:
+                if self.mCurrentState == SplashScreenControllerStateMachine.WAITING_FOR_API:
+                    if self.parent_context.isResponseAvailable():
+                        self.cancelTimer1()
+                        # Leave group SPLASH_SCREEN
+                        self.mGroupState[SplashScreenControllerStateMachine.GROUP_SPLASH_SCREEN] = False
+                        self.parent_context.hideSplashScreen()
+                        self.setCurrentState(SplashScreenControllerStateMachine.READY)
+                        self.parent_context.onReady()
+                    break
+
+                # default
                 break
 
-            # default
-            break
-
-        self.mInTransition = False
+        finally:
+            self.mInTransition = False
 
     def onPause(self):
         if self.mInTransition:
@@ -283,14 +287,16 @@ class SplashScreenControllerStateMachine(object):
 
         self.mInTransition = True
 
-        if self.getDebugLevel() >= 2:
-            print '  onPause'
+        try:
+            if self.getDebugLevel() >= 2:
+                print '  onPause'
 
-        while True:
-            # default
-            break
+            while True:
+                # default
+                break
 
-        self.mInTransition = False
+        finally:
+            self.mInTransition = False
 
     def closeDialog(self):
         if self.mInTransition:
@@ -300,21 +306,23 @@ class SplashScreenControllerStateMachine(object):
 
         self.mInTransition = True
 
-        if self.getDebugLevel() >= 2:
-            print '  closeDialog'
+        try:
+            if self.getDebugLevel() >= 2:
+                print '  closeDialog'
 
-        while True:
-            if self.mCurrentState == SplashScreenControllerStateMachine.ERROR_DIALOG:
-                self.parent_context.dismissDialog()
-                self.setCurrentState(SplashScreenControllerStateMachine.WAITING_FOR_API)
-                self.startTimer1()
-                self.postCheckApi()
+            while True:
+                if self.mCurrentState == SplashScreenControllerStateMachine.ERROR_DIALOG:
+                    self.parent_context.dismissDialog()
+                    self.setCurrentState(SplashScreenControllerStateMachine.WAITING_FOR_API)
+                    self.startTimer1()
+                    self.postCheckApi()
+                    break
+
+                # default
                 break
 
-            # default
-            break
-
-        self.mInTransition = False
+        finally:
+            self.mInTransition = False
 
     def cancelDialog(self):
         if self.mInTransition:
@@ -324,21 +332,23 @@ class SplashScreenControllerStateMachine(object):
 
         self.mInTransition = True
 
-        if self.getDebugLevel() >= 2:
-            print '  cancelDialog'
+        try:
+            if self.getDebugLevel() >= 2:
+                print '  cancelDialog'
 
-        while True:
-            if self.mCurrentState == SplashScreenControllerStateMachine.ERROR_DIALOG:
-                self.parent_context.dismissDialog()
-                self.setCurrentState(SplashScreenControllerStateMachine.WAITING_FOR_API)
-                self.startTimer1()
-                self.postCheckApi()
+            while True:
+                if self.mCurrentState == SplashScreenControllerStateMachine.ERROR_DIALOG:
+                    self.parent_context.dismissDialog()
+                    self.setCurrentState(SplashScreenControllerStateMachine.WAITING_FOR_API)
+                    self.startTimer1()
+                    self.postCheckApi()
+                    break
+
+                # default
                 break
 
-            # default
-            break
-
-        self.mInTransition = False
+        finally:
+            self.mInTransition = False
 
     def click(self):
         if self.mInTransition:
@@ -348,14 +358,16 @@ class SplashScreenControllerStateMachine(object):
 
         self.mInTransition = True
 
-        if self.getDebugLevel() >= 2:
-            print '  click'
+        try:
+            if self.getDebugLevel() >= 2:
+                print '  click'
 
-        while True:
-            # default
-            break
+            while True:
+                # default
+                break
 
-        self.mInTransition = False
+        finally:
+            self.mInTransition = False
 
     def notifyTimer1Timeout(self):
         if not self.parent_context.isResumed():
@@ -368,20 +380,22 @@ class SplashScreenControllerStateMachine(object):
 
         self.mInTransition = True
 
-        if self.getDebugLevel() >= 2:
-            print '  notify_timer1_timeout'
+        try:
+            if self.getDebugLevel() >= 2:
+                print '  notify_timer1_timeout'
 
-        while True:
-            if self.mCurrentState == SplashScreenControllerStateMachine.WAITING_FOR_API:
-                self.cancelTimer1()
-                self.setCurrentState(SplashScreenControllerStateMachine.ERROR_DIALOG)
-                self.parent_context.showDialog();
+            while True:
+                if self.mCurrentState == SplashScreenControllerStateMachine.WAITING_FOR_API:
+                    self.cancelTimer1()
+                    self.setCurrentState(SplashScreenControllerStateMachine.ERROR_DIALOG)
+                    self.parent_context.showDialog();
+                    break
+
+                # default
                 break
 
-            # default
-            break
-
-        self.mInTransition = False
+        finally:
+            self.mInTransition = False
 
     def receiveResponse(self):
         if not self.parent_context.isResumed():
@@ -394,32 +408,34 @@ class SplashScreenControllerStateMachine(object):
 
         self.mInTransition = True
 
-        if self.getDebugLevel() >= 2:
-            print '  receiveResponse'
+        try:
+            if self.getDebugLevel() >= 2:
+                print '  receiveResponse'
 
-        while True:
-            if self.mCurrentState == SplashScreenControllerStateMachine.WAITING_FOR_API:
-                self.cancelTimer1()
-                # Leave group SPLASH_SCREEN
-                self.mGroupState[SplashScreenControllerStateMachine.GROUP_SPLASH_SCREEN] = False
-                self.parent_context.hideSplashScreen()
-                self.setCurrentState(SplashScreenControllerStateMachine.READY)
-                self.parent_context.onReady()
+            while True:
+                if self.mCurrentState == SplashScreenControllerStateMachine.WAITING_FOR_API:
+                    self.cancelTimer1()
+                    # Leave group SPLASH_SCREEN
+                    self.mGroupState[SplashScreenControllerStateMachine.GROUP_SPLASH_SCREEN] = False
+                    self.parent_context.hideSplashScreen()
+                    self.setCurrentState(SplashScreenControllerStateMachine.READY)
+                    self.parent_context.onReady()
+                    break
+
+                if self.mCurrentState == SplashScreenControllerStateMachine.ERROR_DIALOG:
+                    self.parent_context.dismissDialog()
+                    # Leave group SPLASH_SCREEN
+                    self.mGroupState[SplashScreenControllerStateMachine.GROUP_SPLASH_SCREEN] = False
+                    self.parent_context.hideSplashScreen()
+                    self.setCurrentState(SplashScreenControllerStateMachine.READY)
+                    self.parent_context.onReady()
+                    break
+
+                # default
                 break
 
-            if self.mCurrentState == SplashScreenControllerStateMachine.ERROR_DIALOG:
-                self.parent_context.dismissDialog()
-                # Leave group SPLASH_SCREEN
-                self.mGroupState[SplashScreenControllerStateMachine.GROUP_SPLASH_SCREEN] = False
-                self.parent_context.hideSplashScreen()
-                self.setCurrentState(SplashScreenControllerStateMachine.READY)
-                self.parent_context.onReady()
-                break
-
-            # default
-            break
-
-        self.mInTransition = False
+        finally:
+            self.mInTransition = False
 
     def postReceiveResponse(self):
         def _():
@@ -441,26 +457,28 @@ class SplashScreenControllerStateMachine(object):
 
         self.mInTransition = True
 
-        if self.getDebugLevel() >= 2:
-            print '  checkApi'
+        try:
+            if self.getDebugLevel() >= 2:
+                print '  checkApi'
 
-        while True:
-            if self.mCurrentState == SplashScreenControllerStateMachine.WAITING_FOR_API:
-                if self.parent_context.isResponseAvailable():
-                    self.cancelTimer1()
-                    # Leave group SPLASH_SCREEN
-                    self.mGroupState[SplashScreenControllerStateMachine.GROUP_SPLASH_SCREEN] = False
-                    self.parent_context.hideSplashScreen()
-                    self.setCurrentState(SplashScreenControllerStateMachine.READY)
-                    self.parent_context.onReady()
-                else:
-                    self.parent_context.requestApi()
+            while True:
+                if self.mCurrentState == SplashScreenControllerStateMachine.WAITING_FOR_API:
+                    if self.parent_context.isResponseAvailable():
+                        self.cancelTimer1()
+                        # Leave group SPLASH_SCREEN
+                        self.mGroupState[SplashScreenControllerStateMachine.GROUP_SPLASH_SCREEN] = False
+                        self.parent_context.hideSplashScreen()
+                        self.setCurrentState(SplashScreenControllerStateMachine.READY)
+                        self.parent_context.onReady()
+                    else:
+                        self.parent_context.requestApi()
+                    break
+
+                # default
                 break
 
-            # default
-            break
-
-        self.mInTransition = False
+        finally:
+            self.mInTransition = False
 
     def postCheckApi(self):
         def _():

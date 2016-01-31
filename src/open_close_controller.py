@@ -196,35 +196,37 @@ class OpenCloseStateMachine(object):
 
         self.mInTransition = True
 
-        if self.getDebugLevel() >= 2:
-            print '  open'
+        try:
+            if self.getDebugLevel() >= 2:
+                print '  open'
 
-        while True:
-            if self.mCurrentState == OpenCloseStateMachine.CLOSED:
-                if animated:
-                    # Leave group ANTENNA_INVISIBLE
-                    self.mGroupState[OpenCloseStateMachine.GROUP_ANTENNA_INVISIBLE] = False
-                    self.setCurrentState(OpenCloseStateMachine.ANIMATING_CLOSE_TO_OPEN)
-                    self.parent_context.startAnimationCloseToOpen()
-                    # Enter group ANTENNA_VISIBLE
-                    self.mGroupState[OpenCloseStateMachine.GROUP_ANTENNA_VISIBLE] = True
-                    self.parent_context.showAntenna()
-                    # Enter group IN_TRANSITION
-                    self.mGroupState[OpenCloseStateMachine.GROUP_IN_TRANSITION] = True
-                    self.parent_context.setAnimating(True)
-                else:
-                    # Leave group ANTENNA_INVISIBLE
-                    self.mGroupState[OpenCloseStateMachine.GROUP_ANTENNA_INVISIBLE] = False
-                    self.setCurrentState(OpenCloseStateMachine.OPEN)
-                    # Enter group ANTENNA_VISIBLE
-                    self.mGroupState[OpenCloseStateMachine.GROUP_ANTENNA_VISIBLE] = True
-                    self.parent_context.showAntenna()
+            while True:
+                if self.mCurrentState == OpenCloseStateMachine.CLOSED:
+                    if animated:
+                        # Leave group ANTENNA_INVISIBLE
+                        self.mGroupState[OpenCloseStateMachine.GROUP_ANTENNA_INVISIBLE] = False
+                        self.setCurrentState(OpenCloseStateMachine.ANIMATING_CLOSE_TO_OPEN)
+                        self.parent_context.startAnimationCloseToOpen()
+                        # Enter group ANTENNA_VISIBLE
+                        self.mGroupState[OpenCloseStateMachine.GROUP_ANTENNA_VISIBLE] = True
+                        self.parent_context.showAntenna()
+                        # Enter group IN_TRANSITION
+                        self.mGroupState[OpenCloseStateMachine.GROUP_IN_TRANSITION] = True
+                        self.parent_context.setAnimating(True)
+                    else:
+                        # Leave group ANTENNA_INVISIBLE
+                        self.mGroupState[OpenCloseStateMachine.GROUP_ANTENNA_INVISIBLE] = False
+                        self.setCurrentState(OpenCloseStateMachine.OPEN)
+                        # Enter group ANTENNA_VISIBLE
+                        self.mGroupState[OpenCloseStateMachine.GROUP_ANTENNA_VISIBLE] = True
+                        self.parent_context.showAntenna()
+                    break
+
+                # default
                 break
 
-            # default
-            break
-
-        self.mInTransition = False
+        finally:
+            self.mInTransition = False
 
     def close(self, animated):
         if self.mInTransition:
@@ -234,30 +236,32 @@ class OpenCloseStateMachine(object):
 
         self.mInTransition = True
 
-        if self.getDebugLevel() >= 2:
-            print '  close'
+        try:
+            if self.getDebugLevel() >= 2:
+                print '  close'
 
-        while True:
-            if self.mCurrentState == OpenCloseStateMachine.OPEN:
-                if animated:
-                    self.setCurrentState(OpenCloseStateMachine.ANIMATING_OPEN_TO_CLOSE)
-                    self.parent_context.startAnimationOpenToClose()
-                    # Enter group IN_TRANSITION
-                    self.mGroupState[OpenCloseStateMachine.GROUP_IN_TRANSITION] = True
-                    self.parent_context.setAnimating(True)
-                else:
-                    # Leave group ANTENNA_VISIBLE
-                    self.mGroupState[OpenCloseStateMachine.GROUP_ANTENNA_VISIBLE] = False
-                    self.setCurrentState(OpenCloseStateMachine.CLOSED)
-                    # Enter group ANTENNA_INVISIBLE
-                    self.mGroupState[OpenCloseStateMachine.GROUP_ANTENNA_INVISIBLE] = True
-                    self.parent_context.hideAntenna()
+            while True:
+                if self.mCurrentState == OpenCloseStateMachine.OPEN:
+                    if animated:
+                        self.setCurrentState(OpenCloseStateMachine.ANIMATING_OPEN_TO_CLOSE)
+                        self.parent_context.startAnimationOpenToClose()
+                        # Enter group IN_TRANSITION
+                        self.mGroupState[OpenCloseStateMachine.GROUP_IN_TRANSITION] = True
+                        self.parent_context.setAnimating(True)
+                    else:
+                        # Leave group ANTENNA_VISIBLE
+                        self.mGroupState[OpenCloseStateMachine.GROUP_ANTENNA_VISIBLE] = False
+                        self.setCurrentState(OpenCloseStateMachine.CLOSED)
+                        # Enter group ANTENNA_INVISIBLE
+                        self.mGroupState[OpenCloseStateMachine.GROUP_ANTENNA_INVISIBLE] = True
+                        self.parent_context.hideAntenna()
+                    break
+
+                # default
                 break
 
-            # default
-            break
-
-        self.mInTransition = False
+        finally:
+            self.mInTransition = False
 
     def toggle(self, animated):
         if self.mInTransition:
@@ -267,51 +271,53 @@ class OpenCloseStateMachine(object):
 
         self.mInTransition = True
 
-        if self.getDebugLevel() >= 2:
-            print '  toggle'
+        try:
+            if self.getDebugLevel() >= 2:
+                print '  toggle'
 
-        while True:
-            if self.mCurrentState == OpenCloseStateMachine.CLOSED:
-                if animated:
-                    # Leave group ANTENNA_INVISIBLE
-                    self.mGroupState[OpenCloseStateMachine.GROUP_ANTENNA_INVISIBLE] = False
-                    self.setCurrentState(OpenCloseStateMachine.ANIMATING_CLOSE_TO_OPEN)
-                    self.parent_context.startAnimationCloseToOpen()
-                    # Enter group ANTENNA_VISIBLE
-                    self.mGroupState[OpenCloseStateMachine.GROUP_ANTENNA_VISIBLE] = True
-                    self.parent_context.showAntenna()
-                    # Enter group IN_TRANSITION
-                    self.mGroupState[OpenCloseStateMachine.GROUP_IN_TRANSITION] = True
-                    self.parent_context.setAnimating(True)
-                else:
-                    # Leave group ANTENNA_INVISIBLE
-                    self.mGroupState[OpenCloseStateMachine.GROUP_ANTENNA_INVISIBLE] = False
-                    self.setCurrentState(OpenCloseStateMachine.OPEN)
-                    # Enter group ANTENNA_VISIBLE
-                    self.mGroupState[OpenCloseStateMachine.GROUP_ANTENNA_VISIBLE] = True
-                    self.parent_context.showAntenna()
+            while True:
+                if self.mCurrentState == OpenCloseStateMachine.CLOSED:
+                    if animated:
+                        # Leave group ANTENNA_INVISIBLE
+                        self.mGroupState[OpenCloseStateMachine.GROUP_ANTENNA_INVISIBLE] = False
+                        self.setCurrentState(OpenCloseStateMachine.ANIMATING_CLOSE_TO_OPEN)
+                        self.parent_context.startAnimationCloseToOpen()
+                        # Enter group ANTENNA_VISIBLE
+                        self.mGroupState[OpenCloseStateMachine.GROUP_ANTENNA_VISIBLE] = True
+                        self.parent_context.showAntenna()
+                        # Enter group IN_TRANSITION
+                        self.mGroupState[OpenCloseStateMachine.GROUP_IN_TRANSITION] = True
+                        self.parent_context.setAnimating(True)
+                    else:
+                        # Leave group ANTENNA_INVISIBLE
+                        self.mGroupState[OpenCloseStateMachine.GROUP_ANTENNA_INVISIBLE] = False
+                        self.setCurrentState(OpenCloseStateMachine.OPEN)
+                        # Enter group ANTENNA_VISIBLE
+                        self.mGroupState[OpenCloseStateMachine.GROUP_ANTENNA_VISIBLE] = True
+                        self.parent_context.showAntenna()
+                    break
+
+                if self.mCurrentState == OpenCloseStateMachine.OPEN:
+                    if animated:
+                        self.setCurrentState(OpenCloseStateMachine.ANIMATING_OPEN_TO_CLOSE)
+                        self.parent_context.startAnimationOpenToClose()
+                        # Enter group IN_TRANSITION
+                        self.mGroupState[OpenCloseStateMachine.GROUP_IN_TRANSITION] = True
+                        self.parent_context.setAnimating(True)
+                    else:
+                        # Leave group ANTENNA_VISIBLE
+                        self.mGroupState[OpenCloseStateMachine.GROUP_ANTENNA_VISIBLE] = False
+                        self.setCurrentState(OpenCloseStateMachine.CLOSED)
+                        # Enter group ANTENNA_INVISIBLE
+                        self.mGroupState[OpenCloseStateMachine.GROUP_ANTENNA_INVISIBLE] = True
+                        self.parent_context.hideAntenna()
+                    break
+
+                # default
                 break
 
-            if self.mCurrentState == OpenCloseStateMachine.OPEN:
-                if animated:
-                    self.setCurrentState(OpenCloseStateMachine.ANIMATING_OPEN_TO_CLOSE)
-                    self.parent_context.startAnimationOpenToClose()
-                    # Enter group IN_TRANSITION
-                    self.mGroupState[OpenCloseStateMachine.GROUP_IN_TRANSITION] = True
-                    self.parent_context.setAnimating(True)
-                else:
-                    # Leave group ANTENNA_VISIBLE
-                    self.mGroupState[OpenCloseStateMachine.GROUP_ANTENNA_VISIBLE] = False
-                    self.setCurrentState(OpenCloseStateMachine.CLOSED)
-                    # Enter group ANTENNA_INVISIBLE
-                    self.mGroupState[OpenCloseStateMachine.GROUP_ANTENNA_INVISIBLE] = True
-                    self.parent_context.hideAntenna()
-                break
-
-            # default
-            break
-
-        self.mInTransition = False
+        finally:
+            self.mInTransition = False
 
     def startToOpen(self):
         if self.mInTransition:
@@ -321,21 +327,23 @@ class OpenCloseStateMachine(object):
 
         self.mInTransition = True
 
-        if self.getDebugLevel() >= 2:
-            print '  startToOpen'
+        try:
+            if self.getDebugLevel() >= 2:
+                print '  startToOpen'
 
-        while True:
-            if self.mCurrentState == OpenCloseStateMachine.ENTRY_POINT:
-                self.setCurrentState(OpenCloseStateMachine.OPEN)
-                # Enter group ANTENNA_VISIBLE
-                self.mGroupState[OpenCloseStateMachine.GROUP_ANTENNA_VISIBLE] = True
-                self.parent_context.showAntenna()
+            while True:
+                if self.mCurrentState == OpenCloseStateMachine.ENTRY_POINT:
+                    self.setCurrentState(OpenCloseStateMachine.OPEN)
+                    # Enter group ANTENNA_VISIBLE
+                    self.mGroupState[OpenCloseStateMachine.GROUP_ANTENNA_VISIBLE] = True
+                    self.parent_context.showAntenna()
+                    break
+
+                # default
                 break
 
-            # default
-            break
-
-        self.mInTransition = False
+        finally:
+            self.mInTransition = False
 
     def startToClose(self):
         if self.mInTransition:
@@ -345,21 +353,23 @@ class OpenCloseStateMachine(object):
 
         self.mInTransition = True
 
-        if self.getDebugLevel() >= 2:
-            print '  startToClose'
+        try:
+            if self.getDebugLevel() >= 2:
+                print '  startToClose'
 
-        while True:
-            if self.mCurrentState == OpenCloseStateMachine.ENTRY_POINT:
-                self.setCurrentState(OpenCloseStateMachine.CLOSED)
-                # Enter group ANTENNA_INVISIBLE
-                self.mGroupState[OpenCloseStateMachine.GROUP_ANTENNA_INVISIBLE] = True
-                self.parent_context.hideAntenna()
+            while True:
+                if self.mCurrentState == OpenCloseStateMachine.ENTRY_POINT:
+                    self.setCurrentState(OpenCloseStateMachine.CLOSED)
+                    # Enter group ANTENNA_INVISIBLE
+                    self.mGroupState[OpenCloseStateMachine.GROUP_ANTENNA_INVISIBLE] = True
+                    self.parent_context.hideAntenna()
+                    break
+
+                # default
                 break
 
-            # default
-            break
-
-        self.mInTransition = False
+        finally:
+            self.mInTransition = False
 
     def notifyAnimationFinished(self):
         if self.mInTransition:
@@ -369,32 +379,34 @@ class OpenCloseStateMachine(object):
 
         self.mInTransition = True
 
-        if self.getDebugLevel() >= 2:
-            print '  notifyAnimationFinished'
+        try:
+            if self.getDebugLevel() >= 2:
+                print '  notifyAnimationFinished'
 
-        while True:
-            if self.mCurrentState == OpenCloseStateMachine.ANIMATING_CLOSE_TO_OPEN:
-                # Leave group IN_TRANSITION
-                self.mGroupState[OpenCloseStateMachine.GROUP_IN_TRANSITION] = False
-                self.parent_context.setAnimating(False)
-                self.setCurrentState(OpenCloseStateMachine.OPEN)
+            while True:
+                if self.mCurrentState == OpenCloseStateMachine.ANIMATING_CLOSE_TO_OPEN:
+                    # Leave group IN_TRANSITION
+                    self.mGroupState[OpenCloseStateMachine.GROUP_IN_TRANSITION] = False
+                    self.parent_context.setAnimating(False)
+                    self.setCurrentState(OpenCloseStateMachine.OPEN)
+                    break
+
+                if self.mCurrentState == OpenCloseStateMachine.ANIMATING_OPEN_TO_CLOSE:
+                    # Leave group ANTENNA_VISIBLE
+                    self.mGroupState[OpenCloseStateMachine.GROUP_ANTENNA_VISIBLE] = False
+                    # Leave group IN_TRANSITION
+                    self.mGroupState[OpenCloseStateMachine.GROUP_IN_TRANSITION] = False
+                    self.parent_context.setAnimating(False)
+                    self.setCurrentState(OpenCloseStateMachine.CLOSED)
+                    # Enter group ANTENNA_INVISIBLE
+                    self.mGroupState[OpenCloseStateMachine.GROUP_ANTENNA_INVISIBLE] = True
+                    self.parent_context.hideAntenna()
+                    break
+
+                # default
                 break
 
-            if self.mCurrentState == OpenCloseStateMachine.ANIMATING_OPEN_TO_CLOSE:
-                # Leave group ANTENNA_VISIBLE
-                self.mGroupState[OpenCloseStateMachine.GROUP_ANTENNA_VISIBLE] = False
-                # Leave group IN_TRANSITION
-                self.mGroupState[OpenCloseStateMachine.GROUP_IN_TRANSITION] = False
-                self.parent_context.setAnimating(False)
-                self.setCurrentState(OpenCloseStateMachine.CLOSED)
-                # Enter group ANTENNA_INVISIBLE
-                self.mGroupState[OpenCloseStateMachine.GROUP_ANTENNA_INVISIBLE] = True
-                self.parent_context.hideAntenna()
-                break
-
-            # default
-            break
-
-        self.mInTransition = False
+        finally:
+            self.mInTransition = False
 
     STATE_TABLE = ["ENTRY_POINT", "CLOSED", "OPEN", "ANIMATING_CLOSE_TO_OPEN", "ANIMATING_OPEN_TO_CLOSE"]

@@ -181,19 +181,21 @@ class SplashScreenControllerStateMachine(object):
 
         self.mInTransition = True
 
-        if self.getDebugLevel() >= 2:
-            print '  onCreate'
+        try:
+            if self.getDebugLevel() >= 2:
+                print '  onCreate'
 
-        while True:
-            if self.mCurrentState == SplashScreenControllerStateMachine.ENTRY_POINT:
-                self.setCurrentState(SplashScreenControllerStateMachine.DIALOG)
-                self.parent_context.show_dialog()
+            while True:
+                if self.mCurrentState == SplashScreenControllerStateMachine.ENTRY_POINT:
+                    self.setCurrentState(SplashScreenControllerStateMachine.DIALOG)
+                    self.parent_context.show_dialog()
+                    break
+
+                # default
                 break
 
-            # default
-            break
-
-        self.mInTransition = False
+        finally:
+            self.mInTransition = False
 
     def onResume(self):
         if self.mInTransition:
@@ -203,14 +205,16 @@ class SplashScreenControllerStateMachine(object):
 
         self.mInTransition = True
 
-        if self.getDebugLevel() >= 2:
-            print '  onResume'
+        try:
+            if self.getDebugLevel() >= 2:
+                print '  onResume'
 
-        while True:
-            # default
-            break
+            while True:
+                # default
+                break
 
-        self.mInTransition = False
+        finally:
+            self.mInTransition = False
 
     def onPause(self):
         if self.mInTransition:
@@ -220,14 +224,16 @@ class SplashScreenControllerStateMachine(object):
 
         self.mInTransition = True
 
-        if self.getDebugLevel() >= 2:
-            print '  onPause'
+        try:
+            if self.getDebugLevel() >= 2:
+                print '  onPause'
 
-        while True:
-            # default
-            break
+            while True:
+                # default
+                break
 
-        self.mInTransition = False
+        finally:
+            self.mInTransition = False
 
     def closeDialog(self):
         if self.mInTransition:
@@ -237,19 +243,21 @@ class SplashScreenControllerStateMachine(object):
 
         self.mInTransition = True
 
-        if self.getDebugLevel() >= 2:
-            print '  closeDialog'
+        try:
+            if self.getDebugLevel() >= 2:
+                print '  closeDialog'
 
-        while True:
-            if self.mCurrentState == SplashScreenControllerStateMachine.DIALOG:
-                self.parent_context.dismiss_dialog()
-                self.setCurrentState(SplashScreenControllerStateMachine.CLOSED)
+            while True:
+                if self.mCurrentState == SplashScreenControllerStateMachine.DIALOG:
+                    self.parent_context.dismiss_dialog()
+                    self.setCurrentState(SplashScreenControllerStateMachine.CLOSED)
+                    break
+
+                # default
                 break
 
-            # default
-            break
-
-        self.mInTransition = False
+        finally:
+            self.mInTransition = False
 
     def cancelDialog(self):
         if self.mInTransition:
@@ -259,18 +267,20 @@ class SplashScreenControllerStateMachine(object):
 
         self.mInTransition = True
 
-        if self.getDebugLevel() >= 2:
-            print '  cancelDialog'
+        try:
+            if self.getDebugLevel() >= 2:
+                print '  cancelDialog'
 
-        while True:
-            if self.mCurrentState == SplashScreenControllerStateMachine.DIALOG:
-                self.parent_context.dismiss_dialog()
-                self.setCurrentState(SplashScreenControllerStateMachine.CLOSED)
+            while True:
+                if self.mCurrentState == SplashScreenControllerStateMachine.DIALOG:
+                    self.parent_context.dismiss_dialog()
+                    self.setCurrentState(SplashScreenControllerStateMachine.CLOSED)
+                    break
+
+                # default
                 break
 
-            # default
-            break
-
-        self.mInTransition = False
+        finally:
+            self.mInTransition = False
 
     STATE_TABLE = ["ENTRY_POINT", "DIALOG", "CLOSED"]

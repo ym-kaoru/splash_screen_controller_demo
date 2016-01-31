@@ -185,20 +185,22 @@ class NoNetworkSplashScreenControllerStateMachine(object):
 
         self.mInTransition = True
 
-        if self.getDebugLevel() >= 2:
-            print '  onCreate'
+        try:
+            if self.getDebugLevel() >= 2:
+                print '  onCreate'
 
-        while True:
-            if self.mCurrentState == NoNetworkSplashScreenControllerStateMachine.ENTRY_POINT:
-                self.setCurrentState(NoNetworkSplashScreenControllerStateMachine.SPLASH_SCREEN)
-                self.parent_context.showSplashScreen()
-                self.startTimer1()
+            while True:
+                if self.mCurrentState == NoNetworkSplashScreenControllerStateMachine.ENTRY_POINT:
+                    self.setCurrentState(NoNetworkSplashScreenControllerStateMachine.SPLASH_SCREEN)
+                    self.parent_context.showSplashScreen()
+                    self.startTimer1()
+                    break
+
+                # default
                 break
 
-            # default
-            break
-
-        self.mInTransition = False
+        finally:
+            self.mInTransition = False
 
     def onResume(self):
         if self.mInTransition:
@@ -208,14 +210,16 @@ class NoNetworkSplashScreenControllerStateMachine(object):
 
         self.mInTransition = True
 
-        if self.getDebugLevel() >= 2:
-            print '  onResume'
+        try:
+            if self.getDebugLevel() >= 2:
+                print '  onResume'
 
-        while True:
-            # default
-            break
+            while True:
+                # default
+                break
 
-        self.mInTransition = False
+        finally:
+            self.mInTransition = False
 
     def onPause(self):
         if self.mInTransition:
@@ -225,14 +229,16 @@ class NoNetworkSplashScreenControllerStateMachine(object):
 
         self.mInTransition = True
 
-        if self.getDebugLevel() >= 2:
-            print '  onPause'
+        try:
+            if self.getDebugLevel() >= 2:
+                print '  onPause'
 
-        while True:
-            # default
-            break
+            while True:
+                # default
+                break
 
-        self.mInTransition = False
+        finally:
+            self.mInTransition = False
 
     def notifyTimer1Timeout(self):
         if not self.parent_context.isResumed():
@@ -245,21 +251,23 @@ class NoNetworkSplashScreenControllerStateMachine(object):
 
         self.mInTransition = True
 
-        if self.getDebugLevel() >= 2:
-            print '  notify_timer1_timeout'
+        try:
+            if self.getDebugLevel() >= 2:
+                print '  notify_timer1_timeout'
 
-        while True:
-            if self.mCurrentState == NoNetworkSplashScreenControllerStateMachine.SPLASH_SCREEN:
-                self.cancelTimer1()
-                self.parent_context.hideSplashScreen()
-                self.setCurrentState(NoNetworkSplashScreenControllerStateMachine.READY)
-                self.parent_context.onReady()
+            while True:
+                if self.mCurrentState == NoNetworkSplashScreenControllerStateMachine.SPLASH_SCREEN:
+                    self.cancelTimer1()
+                    self.parent_context.hideSplashScreen()
+                    self.setCurrentState(NoNetworkSplashScreenControllerStateMachine.READY)
+                    self.parent_context.onReady()
+                    break
+
+                # default
                 break
 
-            # default
-            break
-
-        self.mInTransition = False
+        finally:
+            self.mInTransition = False
 
     def timer1Runner(self):
         def _():

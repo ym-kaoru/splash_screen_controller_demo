@@ -1,6 +1,6 @@
 GIT
   remote: ssh://git@git.yumemi.jp:10022/techdev/view_generator_ruby.git
-  revision: 15893823c8f5c5106fb5e41a64fdbb62d075ea02
+  revision: 877adb1902eedc545ed8534a27fb0d38cdd929ef
   specs:
     view_generator (0.1.0)
       fssm (~> 0.2)
@@ -10,7 +10,7 @@ GEM
   remote: https://rubygems.org/
   specs:
     fssm (0.2.10)
-    test_case_generator (0.2.2)
+    test_case_generator (0.3.0)
       thor
     thor (0.19.1)
 

@@ -1,0 +1,50 @@
+state_machine('CameraStateMachine', name:'mStateMachine') {
+    def_event :onCreate => [arg('saved_instance_state', type:'Bundle')]
+    def_event :onResume, :onPause
+    def_public_event :surfaceCreated, :surfaceChanged, :surfaceDestroyed
+    def_event :setParameters => [ arg('parameters', type:'Camera.Parameters') ]
+    def_event :requestAutoFocus
+    def_async_event :notifyAutoFocusFinished
+    def_public_event :takePicture
+    def_async_event :notifyCameraOpen
+    def_async_event :notifyCameraUnavailable
+
+    state(:STOPPED) {
+        onResume :PREPARING_CAMERA
+        onPause nil
+        surfaceDestroyed nil
+    }
+
+    state(:CAMERA_UNAVAILABLE) {
+        surfaceDestroyed nil
+    }
+
+    state_group(:HOLDING_CAMERA, exit:'self.parent_context.releaseCamera()') {
+
+        state(:PREPARING_CAMERA, entry:'self.parent_context.openCamera()') {
+            notifyCameraOpen :PREPARING_SURFACE
+            notifyCameraUnavailable :CAMERA_UNAVAILABLE
+            onPause nil, action:'raise RuntimeError("Cancellation of openCamera is not supported.")'
+            surfaceDestroyed nil, action:'raise RuntimeError("Cancellation of openCamera is not supported.")'
+        }
+
+        state(:PREPARING_SURFACE) {
+            surfaceCreated :PREVIEWING
+        }
+
+        state(:PREVIEWING, entry:'self.parent_context.startPreview()', exit:'self.parent_context.stopPreview()') {
+            requestAutoFocus :RUNNING_AUTO_FOCUS
+            takePicture nil, action:'self.parent_context.onTakePicture()'
+        }
+
+        state(:RUNNING_AUTO_FOCUS) {
+            notifyAutoFocusFinished :PREVIEWING
+        }
+
+    }
+
+    default_state {
+        onPause :STOPPED
+        surfaceDestroyed :STOPPED
+    }
+}

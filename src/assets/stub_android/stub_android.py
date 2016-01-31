@@ -138,3 +138,70 @@ class StubActivity(object):
     def onDestroy(self):
         self.onSaveInstanceState_called = True
         self.delegate_instance.onStop()
+
+
+class StubCamera(object):
+    def __init__(self, camera_unavailable=False):
+        super(StubCamera, self).__init__()
+        self.camera_unavailable = camera_unavailable
+        self.counter = 0
+        self.surface_holder = None
+        self.previewing = False
+
+    def open(self):
+        if self.camera_unavailable:
+            raise CameraException()
+
+        self.counter += 1
+        if self.counter >= 2:
+            raise IllegalStateException("counter = %d" % self.counter)
+        return self
+
+    def release(self):
+        self.counter -= 1
+        if self.counter < 0:
+            raise IllegalStateException("counter = %d" % self.counter)
+        return self
+
+    def setPreviewDisplay(self, surface_holder):
+        if self.is_released():
+            raise IllegalStateException("Camera is not open")
+        self.surface_holder = surface_holder
+
+    def startPreview(self):
+        if self.is_released():
+            raise IllegalStateException("Camera is not open")
+        self.previewing = True
+
+    def stopPreview(self):
+        if self.is_released():
+            raise IllegalStateException("Camera is not open")
+        self.previewing = False
+
+    def takePicture(self):
+        if self.is_released():
+            raise IllegalStateException("Camera is not open")
+        if self.surface_holder is None:
+            raise IllegalStateException("No surface")
+        if not self.is_previewing():
+            raise IllegalStateException("Does not start preview")
+
+    def is_released(self):
+        return self.counter == 0
+
+    def is_previewing(self):
+        return self.previewing
+
+
+class CameraFactory(object):
+
+    def __init__(self, stub_camera):
+        super(CameraFactory, self).__init__()
+        self.stub_camera = stub_camera
+
+    def open(self):
+        return self.stub_camera.open()
+
+
+class CameraException(RuntimeError):
+    pass
