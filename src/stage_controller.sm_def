@@ -4,8 +4,8 @@ state_machine('StageStateMachine', name:'state_machine') {
     def_repeat_timer :timer1, 1000    #, pending_if:'not self.parent_context.isResumed()'
     def_public_event :click
     def_event :notifyAnimationFinished
-    def_event :cancelDialog
-    def_event :closeDialog
+    def_public_event :cancelDialog
+    def_public_event :closeDialog
 
     state(:ENTRY_POINT) {
         onResume :STAGE

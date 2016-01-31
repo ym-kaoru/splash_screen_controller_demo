@@ -112,6 +112,14 @@ class TestStageController(unittest.TestCase):
     def notifyTimer1TimeoutB(self):
         self._run_timer_tasks()
 
+    @run_pending_tasks
+    def closeDialogA(self):
+        self.activityA.delegate_instance.closeDialog()
+
+    @run_pending_tasks
+    def closeDialogB(self):
+        self.activityB.delegate_instance.closeDialog()
+
     def expectInGameOverState(self):
         self.assertEqual('GAME_OVER', self.activityB.delegate_instance.state_machine.getCurrentStateName())
 
@@ -124,8 +132,8 @@ class TestStageController(unittest.TestCase):
     # https://rubygems.org/gems/test_case_generator
     #
 
-    @print_patterns(['onCreateA', 'onResumeA', 'clickA', 'onPauseA', 'onSaveInstanceStateA', 'onCreateB', 'onResumeB', 'clickB', 'onPauseB', 'expectInGameOverState'])
-    def test_onCreateA_onResumeA_clickA_onPauseA_onSaveInstanceStateA_onCreateB_onResumeB_clickB_onPauseB_expectInGameOverState(self):
+    @print_patterns(['onCreateA', 'onResumeA', 'clickA', 'onPauseA', 'onSaveInstanceStateA', 'onCreateB', 'onResumeB', 'clickB', 'closeDialogB', 'onPauseB', 'expectInGameOverState'])
+    def test_onCreateA_onResumeA_clickA_onPauseA_onSaveInstanceStateA_onCreateB_onResumeB_clickB_closeDialogB_onPauseB_expectInGameOverState(self):
         self.onCreateA()
         self.onResumeA()
         self.clickA()
@@ -134,11 +142,12 @@ class TestStageController(unittest.TestCase):
         self.onCreateB()
         self.onResumeB()
         self.clickB()
+        self.closeDialogB()
         self.onPauseB()
         self.expectInGameOverState()
 
-    @print_patterns(['onCreateA', 'onResumeA', 'clickA', 'notifyTimer1TimeoutA', 'onPauseA', 'onSaveInstanceStateA', 'onCreateB', 'onResumeB', 'notifyTimer1TimeoutB', 'notifyTimer1TimeoutB', 'onPauseB', 'expectInGameOverState'])
-    def test_onCreateA_onResumeA_clickA_notifyTimer1TimeoutA_onPauseA_onSaveInstanceStateA_onCreateB_onResumeB_notifyTimer1TimeoutB_notifyTimer1TimeoutB_onPauseB_expectInGameOverState(self):
+    @print_patterns(['onCreateA', 'onResumeA', 'clickA', 'notifyTimer1TimeoutA', 'onPauseA', 'onSaveInstanceStateA', 'onCreateB', 'onResumeB', 'notifyTimer1TimeoutB', 'notifyTimer1TimeoutB', 'closeDialogB', 'onPauseB', 'expectInGameOverState'])
+    def test_onCreateA_onResumeA_clickA_notifyTimer1TimeoutA_onPauseA_onSaveInstanceStateA_onCreateB_onResumeB_notifyTimer1TimeoutB_notifyTimer1TimeoutB_closeDialogB_onPauseB_expectInGameOverState(self):
         self.onCreateA()
         self.onResumeA()
         self.clickA()
@@ -149,11 +158,12 @@ class TestStageController(unittest.TestCase):
         self.onResumeB()
         self.notifyTimer1TimeoutB()
         self.notifyTimer1TimeoutB()
+        self.closeDialogB()
         self.onPauseB()
         self.expectInGameOverState()
 
-    @print_patterns(['onCreateA', 'onResumeA', 'notifyTimer1TimeoutA', 'notifyTimer1TimeoutA', 'notifyTimer1TimeoutA', 'clickA', 'notifyTimer1TimeoutA', 'onPauseA', 'onSaveInstanceStateA', 'onCreateB', 'onResumeB', 'notifyTimer1TimeoutB', 'notifyTimer1TimeoutB', 'onPauseB', 'expectInGameOverState'])
-    def test_onCreateA_onResumeA_notifyTimer1TimeoutA_notifyTimer1TimeoutA_notifyTimer1TimeoutA_clickA_notifyTimer1TimeoutA_onPauseA_onSaveInstanceStateA_onCreateB_onResumeB_notifyTimer1TimeoutB_notifyTimer1TimeoutB_onPauseB_expectInGameOverState(self):
+    @print_patterns(['onCreateA', 'onResumeA', 'notifyTimer1TimeoutA', 'notifyTimer1TimeoutA', 'notifyTimer1TimeoutA', 'clickA', 'notifyTimer1TimeoutA', 'onPauseA', 'onSaveInstanceStateA', 'onCreateB', 'onResumeB', 'notifyTimer1TimeoutB', 'notifyTimer1TimeoutB', 'closeDialogB', 'onPauseB', 'expectInGameOverState'])
+    def test_onCreateA_onResumeA_notifyTimer1TimeoutA_notifyTimer1TimeoutA_notifyTimer1TimeoutA_clickA_notifyTimer1TimeoutA_onPauseA_onSaveInstanceStateA_onCreateB_onResumeB_notifyTimer1TimeoutB_notifyTimer1TimeoutB_closeDialogB_onPauseB_expectInGameOverState(self):
         self.onCreateA()
         self.onResumeA()
         self.notifyTimer1TimeoutA()
@@ -167,6 +177,7 @@ class TestStageController(unittest.TestCase):
         self.onResumeB()
         self.notifyTimer1TimeoutB()
         self.notifyTimer1TimeoutB()
+        self.closeDialogB()
         self.onPauseB()
         self.expectInGameOverState()
 
@@ -174,7 +185,7 @@ class TestStageController(unittest.TestCase):
     def checkSanity(cls):
         sane = True
         msg = []
-        for method in ['onCreateA', 'onResumeA', 'clickA', 'onPauseA', 'onSaveInstanceStateA', 'onCreateB', 'onResumeB', 'clickB', 'onPauseB', 'expectInGameOverState', 'notifyTimer1TimeoutA', 'notifyTimer1TimeoutB']:
+        for method in ['onCreateA', 'onResumeA', 'clickA', 'onPauseA', 'onSaveInstanceStateA', 'onCreateB', 'onResumeB', 'clickB', 'closeDialogB', 'onPauseB', 'expectInGameOverState', 'notifyTimer1TimeoutA', 'notifyTimer1TimeoutB']:
             if not hasattr(cls, method):
                 msg += [
                     '    def %s(self):' % method,

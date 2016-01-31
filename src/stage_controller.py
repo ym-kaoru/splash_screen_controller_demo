@@ -148,6 +148,12 @@ class StageController(object):
     def click(self):
         self.state_machine.click()
 
+    def cancelDialog(self):
+        self.state_machine.cancelDialog()
+
+    def closeDialog(self):
+        self.state_machine.closeDialog()
+
 
 class StageStateMachine(object):
 
